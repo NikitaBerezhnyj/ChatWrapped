@@ -1,0 +1,82 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-text-background);
+    --slide-muted: var(--story-muted);
+
+    justify-content: center;
+    background: var(--slide-text-background);
+}
+
+.wordCloud {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: baseline;
+    gap: 13px 16px;
+    max-height: 310px;
+    overflow-y: auto;
+    margin-top: 34px;
+    padding: 4px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--story-decoration-border) transparent;
+}
+
+.word {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    min-width: 0;
+    color: var(--story-text);
+    font-weight: 900;
+    letter-spacing: -0.065em;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.leadingWord {
+    color: var(--story-accent);
+    font-weight: 950;
+}
+
+.wordText {
+    overflow-wrap: anywhere;
+}
+
+.wordCount {
+    flex: 0 0 auto;
+    color: var(--story-muted);
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 0;
+}
+
+.emptyState {
+    position: relative;
+    z-index: 2;
+    max-width: 260px;
+    margin-top: 36px;
+    color: var(--story-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media (max-width: 360px) {
+    .wordCloud {
+        gap: 10px 12px;
+        margin-top: 26px;
+    }
+
+    .word {
+        letter-spacing: -0.05em;
+    }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .wordCloud {
+        max-height: 240px;
+        margin-top: 22px;
+    }
+}

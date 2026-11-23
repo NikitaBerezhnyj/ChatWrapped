@@ -1,0 +1,111 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-text-background);
+    --slide-muted: var(--story-muted);
+
+    justify-content: center;
+    background: var(--slide-text-background);
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 42px;
+}
+
+.metric strong {
+    max-width: 100%;
+    color: var(--story-accent);
+    font-size: clamp(100px, 27vw, 170px);
+    font-weight: 950;
+    letter-spacing: -0.11em;
+    line-height: 0.8;
+    overflow-wrap: anywhere;
+}
+
+.metric>span {
+    max-width: 190px;
+    color: var(--story-muted);
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 0.13em;
+    line-height: 1.5;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 42px;
+}
+
+.emptyState strong {
+    color: var(--story-accent);
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+.emptyState span {
+    color: var(--story-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.repeatVisual {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 30px;
+    overflow: hidden;
+}
+
+.repeatVisual span {
+    color: transparent;
+    font-size: clamp(25px, 7vw, 42px);
+    font-weight: 950;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+    -webkit-text-stroke: 1px var(--story-decoration-border);
+}
+
+.repeatVisual span:nth-child(2) {
+    color: var(--story-decoration-fill);
+    -webkit-text-stroke: 0;
+}
+
+@media (max-width: 360px) {
+    .metric {
+        gap: 10px;
+        margin-top: 32px;
+    }
+
+    .repeatVisual {
+        margin-top: 24px;
+    }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .metric {
+        margin-top: 26px;
+    }
+
+    .repeatVisual {
+        margin-top: 20px;
+    }
+}
