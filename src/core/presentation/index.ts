@@ -1,18 +1,14 @@
+export * from "./types";
+
+export * from "./formatting";
+
 export type { PresentationDataBuilder } from "./presentation-data-builder";
 export { LocalPresentationDataBuilder } from "./local-presentation-data-builder";
 
 export type {
-  PresentationData,
-  PresentationSlide,
-  PresentationSlideType,
-  PresentationParticipant,
-  CoverSlide,
-  OverviewSlide,
-  ActivitySlide,
-  ParticipantsSlide,
-  TextSlide,
-  ConversationsSlide,
-  AchievementsSlide
-} from "./types";
+  PresentationOptions,
+  PreparedPresentation,
+  PresentationService
+} from "./presentation-service";
 
-export * from "./formatting";
+export { LocalPresentationService } from "./local-presentation-service";

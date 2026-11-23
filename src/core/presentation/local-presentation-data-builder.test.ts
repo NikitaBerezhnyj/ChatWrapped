@@ -196,4 +196,99 @@ describe("LocalPresentationDataBuilder", () => {
     expect(firstResult).not.toBe(secondResult);
     expect(firstResult.slides).not.toBe(secondResult.slides);
   });
+
+  it("includes all overview statistics", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+    const result = builder.build(chat, analysis);
+
+    const slide = result.slides.find(item => item.type === "overview");
+
+    expect(slide).toMatchObject({
+      type: "overview",
+      totalMessages: analysis.analytics.overview.totalMessages,
+      totalWords: analysis.analytics.overview.totalWords,
+      totalCharacters: analysis.analytics.overview.totalCharacters,
+      messagesWithText: analysis.analytics.overview.messagesWithText,
+      durationMs: analysis.analytics.overview.durationMs,
+      activeDays: analysis.analytics.overview.activeDays,
+      averageMessagesPerActiveDay: analysis.analytics.overview.averageMessagesPerActiveDay,
+      averageWordsPerMessage: analysis.analytics.overview.averageWordsPerMessage,
+      averageCharactersPerMessage: analysis.analytics.overview.averageCharactersPerMessage
+    });
+  });
+
+  it("includes all activity, participant and text statistics", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+    const result = builder.build(chat, analysis);
+
+    const activitySlide = result.slides.find(item => item.type === "activity");
+    const participantsSlide = result.slides.find(item => item.type === "participants");
+    const textSlide = result.slides.find(item => item.type === "text");
+
+    expect(activitySlide).toMatchObject({
+      type: "activity",
+      byDay: analysis.analytics.activity.byDay,
+      byMonth: analysis.analytics.activity.byMonth,
+      byHour: analysis.analytics.activity.byHour,
+      byWeekday: analysis.analytics.activity.byWeekday,
+      mostActiveDay: analysis.analytics.activity.mostActiveDay,
+      mostActiveMonth: analysis.analytics.activity.mostActiveMonth,
+      mostActiveHour: analysis.analytics.activity.mostActiveHour,
+      mostActiveWeekday: analysis.analytics.activity.mostActiveWeekday,
+      longestActiveStreak: analysis.analytics.activity.longestActiveStreak,
+      longestGapMs: analysis.analytics.activity.longestGapMs
+    });
+
+    expect(participantsSlide?.type).toBe("participants");
+
+    if (participantsSlide?.type !== "participants") {
+      throw new Error("Participants slide was not generated");
+    }
+
+    expect(participantsSlide.participants[0]).toMatchObject({
+      characterCount: analysis.analytics.participants[0].characterCount,
+      nightMessages: analysis.analytics.participants[0].nightMessages,
+      emojiCount: analysis.analytics.participants[0].emojiCount,
+      startedConversations: analysis.analytics.participants[0].startedConversations
+    });
+
+    expect(textSlide).toMatchObject({
+      type: "text",
+      shortestMessage: analysis.analytics.text.shortestMessage,
+      mostRepeatedMessage: analysis.analytics.text.mostRepeatedMessage
+    });
+  });
+
+  it("creates independent copies of nested analytics data", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+    const result = builder.build(chat, analysis);
+
+    const activitySlide = result.slides.find(item => item.type === "activity");
+    const textSlide = result.slides.find(item => item.type === "text");
+    const achievementsSlide = result.slides.find(item => item.type === "achievements");
+
+    if (
+      activitySlide?.type !== "activity" ||
+      textSlide?.type !== "text" ||
+      achievementsSlide?.type !== "achievements"
+    ) {
+      throw new Error("Expected presentation slides were not generated");
+    }
+
+    expect(activitySlide.byDay).not.toBe(analysis.analytics.activity.byDay);
+    expect(activitySlide.byDay[0]).not.toBe(analysis.analytics.activity.byDay[0]);
+
+    expect(textSlide.mostFrequentWords).not.toBe(analysis.analytics.text.mostFrequentWords);
+
+    expect(achievementsSlide.achievements).not.toBe(analysis.achievements);
+
+    if (activitySlide.byDay.length > 0) {
+      activitySlide.byDay[0].count += 1;
+
+      expect(activitySlide.byDay[0].count).not.toBe(analysis.analytics.activity.byDay[0].count);
+    }
+  });
 });

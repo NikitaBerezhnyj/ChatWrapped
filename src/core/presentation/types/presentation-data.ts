@@ -29,21 +29,24 @@ export interface OverviewSlide extends PresentationSlideBase {
   totalMessages: number;
   totalWords: number;
   totalCharacters: number;
-  activeDays: number;
+  messagesWithText: number;
   durationMs: number;
+  activeDays: number;
+  averageMessagesPerActiveDay: number;
+  averageWordsPerMessage: number;
+  averageCharactersPerMessage: number;
 }
 
 export interface ActivitySlide extends PresentationSlideBase {
   type: "activity";
-  mostActiveDay: {
+  byDay: Array<{
     date: string;
     count: number;
-  } | null;
-  mostActiveHour: {
-    hour: number;
+  }>;
+  byMonth: Array<{
+    month: string;
     count: number;
-  } | null;
-  longestActiveStreak: number;
+  }>;
   byHour: Array<{
     hour: number;
     count: number;
@@ -52,6 +55,24 @@ export interface ActivitySlide extends PresentationSlideBase {
     weekday: number;
     count: number;
   }>;
+  mostActiveDay: {
+    date: string;
+    count: number;
+  } | null;
+  mostActiveMonth: {
+    month: string;
+    count: number;
+  } | null;
+  mostActiveHour: {
+    hour: number;
+    count: number;
+  } | null;
+  mostActiveWeekday: {
+    weekday: number;
+    count: number;
+  } | null;
+  longestActiveStreak: number;
+  longestGapMs: number;
 }
 
 export interface ParticipantsSlide extends PresentationSlideBase {
@@ -63,7 +84,11 @@ export interface ParticipantsSlide extends PresentationSlideBase {
     messageShare: number;
     wordCount: number;
     wordShare: number;
+    characterCount: number;
     averageMessageLength: number;
+    nightMessages: number;
+    emojiCount: number;
+    startedConversations: number;
   }>;
 }
 
@@ -84,6 +109,14 @@ export interface TextSlide extends PresentationSlideBase {
   longestMessage: {
     text: string;
     characterCount: number;
+  } | null;
+  shortestMessage: {
+    text: string;
+    characterCount: number;
+  } | null;
+  mostRepeatedMessage: {
+    text: string;
+    count: number;
   } | null;
 }
 
