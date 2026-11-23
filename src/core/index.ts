@@ -3,3 +3,4 @@ export * from "./parsers/telegram";
 export * from "./normalization";
 export * from "./analytics";
 export * from "./achievements";
+export * from "./pipeline";
