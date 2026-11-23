@@ -208,6 +208,10 @@ describe("LocalPresentationFormatterFactory", () => {
       achievements: {
         title: "Your achievements",
         subtitle: "Milestones from your conversation"
+      },
+      finale: {
+        title: "That's a wrap",
+        subtitle: "Every message made this story"
       }
     };
 

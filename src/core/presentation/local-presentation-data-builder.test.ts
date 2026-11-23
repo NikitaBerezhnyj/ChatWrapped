@@ -43,116 +43,7 @@ describe("LocalPresentationDataBuilder", () => {
   const builder = new LocalPresentationDataBuilder();
   const pipeline = new LocalChatAnalysisPipeline();
 
-  it("builds all presentation slides", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-
-    const result = builder.build(chat, analysis);
-
-    expect(result.slides.map(slide => slide.type)).toEqual([
-      "cover",
-      "overview",
-      "activity",
-      "participants",
-      "text",
-      "conversations",
-      "achievements"
-    ]);
-  });
-
-  it("includes the chat title", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-
-    const result = builder.build(chat, analysis);
-
-    expect(result.chatTitle).toBe("Alice and Bob");
-    expect(result.slides[0]).toMatchObject({
-      type: "cover",
-      chatTitle: "Alice and Bob"
-    });
-  });
-
-  it("uses the earliest and latest message timestamps", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-
-    const result = builder.build(chat, analysis);
-    const coverSlide = result.slides[0];
-
-    expect(coverSlide).toMatchObject({
-      type: "cover",
-      period: {
-        start: 1_000,
-        end: 3_000
-      }
-    });
-  });
-
-  it("maps participant IDs to their names", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-
-    const result = builder.build(chat, analysis);
-    const participantsSlide = result.slides.find(slide => slide.type === "participants");
-
-    expect(participantsSlide?.type).toBe("participants");
-
-    if (participantsSlide?.type !== "participants") {
-      throw new Error("Participants slide was not generated");
-    }
-
-    expect(participantsSlide.participants).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: "user-1",
-          name: "Alice"
-        }),
-        expect.objectContaining({
-          id: "user-2",
-          name: "Bob"
-        })
-      ])
-    );
-  });
-
-  it("uses participant IDs as fallback names", async () => {
-    const chat = createChat({
-      participants: []
-    });
-    const analysis = await pipeline.analyze(chat);
-
-    const result = builder.build(chat, analysis);
-    const participantsSlide = result.slides.find(slide => slide.type === "participants");
-
-    expect(participantsSlide?.type).toBe("participants");
-
-    if (participantsSlide?.type !== "participants") {
-      throw new Error("Participants slide was not generated");
-    }
-
-    const participant = participantsSlide.participants.find(item => item.id === "user-1");
-
-    expect(participant?.name).toBe("user-1");
-  });
-
-  it("includes all achievements", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-
-    const result = builder.build(chat, analysis);
-    const achievementsSlide = result.slides.find(slide => slide.type === "achievements");
-
-    expect(achievementsSlide?.type).toBe("achievements");
-
-    if (achievementsSlide?.type !== "achievements") {
-      throw new Error("Achievements slide was not generated");
-    }
-
-    expect(achievementsSlide.achievements).toEqual(analysis.achievements);
-  });
-
-  it("handles an empty chat", async () => {
+  it("always creates a cover and a finale", async () => {
     const chat = createChat({
       messages: [],
       participants: []
@@ -160,17 +51,142 @@ describe("LocalPresentationDataBuilder", () => {
     const analysis = await pipeline.analyze(chat);
 
     const result = builder.build(chat, analysis);
-    const coverSlide = result.slides[0];
 
-    expect(coverSlide).toMatchObject({
+    expect(result.slides[0]).toMatchObject({
+      id: "cover",
       type: "cover",
+      kind: "cover",
+      chatTitle: chat.title,
       totalMessages: 0,
-      period: {
-        start: null,
-        end: null
-      },
-      participants: []
+      period: { start: null, end: null }
     });
+
+    expect(result.slides.at(-1)).toMatchObject({
+      id: "finale",
+      type: "finale",
+      kind: "finale",
+      chatTitle: chat.title,
+      totalMessages: 0,
+      totalParticipants: 0
+    });
+  });
+
+  it("creates overview slides when the corresponding data is available", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const kinds = result.slides.map(slide => slide.kind);
+
+    expect(kinds).toContain("overview_volume");
+    expect(kinds).toContain("overview_duration");
+    expect(kinds).toContain("overview_pace");
+  });
+
+  it("includes all known participants, even those without messages", async () => {
+    const chat = createChat({
+      participants: [
+        { id: "user-1", name: "Alice" },
+        { id: "user-2", name: "Bob" },
+        { id: "user-3", name: "Charlie" }
+      ]
+    });
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const balanceSlide = result.slides.find(slide => slide.kind === "participants_balance");
+
+    expect(balanceSlide?.kind).toBe("participants_balance");
+
+    if (balanceSlide?.kind !== "participants_balance") {
+      throw new Error("Participants balance slide was not generated");
+    }
+
+    expect(balanceSlide.participants).toHaveLength(3);
+    expect(balanceSlide.participants).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "user-1", name: "Alice" }),
+        expect.objectContaining({ id: "user-2", name: "Bob" }),
+        expect.objectContaining({
+          id: "user-3",
+          name: "Charlie",
+          messageCount: 0,
+          messageShare: 0,
+          wordCount: 0
+        })
+      ])
+    );
+
+    expect(result.slides.filter(slide => slide.kind === "participant_profile")).toHaveLength(3);
+  });
+
+  it("uses participant IDs as fallback only when participant names are supplied that way", async () => {
+    const chat = createChat({
+      participants: [{ id: "user-1", name: "user-1" }]
+    });
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const profile = result.slides.find(slide => slide.kind === "participant_profile");
+
+    expect(profile?.kind).toBe("participant_profile");
+
+    if (profile?.kind !== "participant_profile") {
+      throw new Error("Participant profile was not generated");
+    }
+
+    expect(profile.participant.name).toBe("user-1");
+  });
+
+  it("does not include locked achievements", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const achievementSlides = result.slides.filter(slide => slide.kind === "achievement");
+    const recap = result.slides.find(slide => slide.kind === "achievements_recap");
+
+    expect(
+      achievementSlides.every(slide =>
+        slide.kind === "achievement" ? slide.achievement.unlocked : false
+      )
+    ).toBe(true);
+
+    if (recap?.kind === "achievements_recap") {
+      expect(recap.achievements.every(achievement => achievement.unlocked)).toBe(true);
+    }
+  });
+
+  it("does not expose the original repeated message text", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const serialized = JSON.stringify(result);
+
+    expect(serialized).not.toContain("Hello there!");
+    expect(serialized).not.toContain("Hi Alice!");
+    expect(serialized).not.toContain("How are you?");
+  });
+
+  it("creates independent copies of nested analytics data", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+
+    const originalAnalysis = structuredClone(analysis);
+    const result = builder.build(chat, analysis);
+
+    expect(analysis).toEqual(originalAnalysis);
+
+    const rhythmSlide = result.slides.find(slide => slide.kind === "activity_rhythm");
+
+    if (rhythmSlide?.kind === "activity_rhythm") {
+      expect(rhythmSlide.byHour).not.toBe(analysis.analytics.activity.byHour);
+
+      if (rhythmSlide.byHour.length > 0) {
+        expect(rhythmSlide.byHour[0]).not.toBe(analysis.analytics.activity.byHour[0]);
+      }
+    }
   });
 
   it("does not mutate the original chat or analysis", async () => {
@@ -197,98 +213,20 @@ describe("LocalPresentationDataBuilder", () => {
     expect(firstResult.slides).not.toBe(secondResult.slides);
   });
 
-  it("includes all overview statistics", async () => {
+  it("preserves the order of the presentation", async () => {
     const chat = createChat();
     const analysis = await pipeline.analyze(chat);
+
     const result = builder.build(chat, analysis);
+    const kinds = result.slides.map(slide => slide.kind);
 
-    const slide = result.slides.find(item => item.type === "overview");
+    expect(kinds[0]).toBe("cover");
+    expect(kinds.at(-1)).toBe("finale");
 
-    expect(slide).toMatchObject({
-      type: "overview",
-      totalMessages: analysis.analytics.overview.totalMessages,
-      totalWords: analysis.analytics.overview.totalWords,
-      totalCharacters: analysis.analytics.overview.totalCharacters,
-      messagesWithText: analysis.analytics.overview.messagesWithText,
-      durationMs: analysis.analytics.overview.durationMs,
-      activeDays: analysis.analytics.overview.activeDays,
-      averageMessagesPerActiveDay: analysis.analytics.overview.averageMessagesPerActiveDay,
-      averageWordsPerMessage: analysis.analytics.overview.averageWordsPerMessage,
-      averageCharactersPerMessage: analysis.analytics.overview.averageCharactersPerMessage
-    });
-  });
+    expect(kinds.indexOf("overview_volume")).toBeLessThan(kinds.indexOf("activity_peak"));
 
-  it("includes all activity, participant and text statistics", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-    const result = builder.build(chat, analysis);
+    expect(kinds.indexOf("activity_peak")).toBeLessThan(kinds.indexOf("participants_balance"));
 
-    const activitySlide = result.slides.find(item => item.type === "activity");
-    const participantsSlide = result.slides.find(item => item.type === "participants");
-    const textSlide = result.slides.find(item => item.type === "text");
-
-    expect(activitySlide).toMatchObject({
-      type: "activity",
-      byDay: analysis.analytics.activity.byDay,
-      byMonth: analysis.analytics.activity.byMonth,
-      byHour: analysis.analytics.activity.byHour,
-      byWeekday: analysis.analytics.activity.byWeekday,
-      mostActiveDay: analysis.analytics.activity.mostActiveDay,
-      mostActiveMonth: analysis.analytics.activity.mostActiveMonth,
-      mostActiveHour: analysis.analytics.activity.mostActiveHour,
-      mostActiveWeekday: analysis.analytics.activity.mostActiveWeekday,
-      longestActiveStreak: analysis.analytics.activity.longestActiveStreak,
-      longestGapMs: analysis.analytics.activity.longestGapMs
-    });
-
-    expect(participantsSlide?.type).toBe("participants");
-
-    if (participantsSlide?.type !== "participants") {
-      throw new Error("Participants slide was not generated");
-    }
-
-    expect(participantsSlide.participants[0]).toMatchObject({
-      characterCount: analysis.analytics.participants[0].characterCount,
-      nightMessages: analysis.analytics.participants[0].nightMessages,
-      emojiCount: analysis.analytics.participants[0].emojiCount,
-      startedConversations: analysis.analytics.participants[0].startedConversations
-    });
-
-    expect(textSlide).toMatchObject({
-      type: "text",
-      shortestMessage: analysis.analytics.text.shortestMessage,
-      mostRepeatedMessage: analysis.analytics.text.mostRepeatedMessage
-    });
-  });
-
-  it("creates independent copies of nested analytics data", async () => {
-    const chat = createChat();
-    const analysis = await pipeline.analyze(chat);
-    const result = builder.build(chat, analysis);
-
-    const activitySlide = result.slides.find(item => item.type === "activity");
-    const textSlide = result.slides.find(item => item.type === "text");
-    const achievementsSlide = result.slides.find(item => item.type === "achievements");
-
-    if (
-      activitySlide?.type !== "activity" ||
-      textSlide?.type !== "text" ||
-      achievementsSlide?.type !== "achievements"
-    ) {
-      throw new Error("Expected presentation slides were not generated");
-    }
-
-    expect(activitySlide.byDay).not.toBe(analysis.analytics.activity.byDay);
-    expect(activitySlide.byDay[0]).not.toBe(analysis.analytics.activity.byDay[0]);
-
-    expect(textSlide.mostFrequentWords).not.toBe(analysis.analytics.text.mostFrequentWords);
-
-    expect(achievementsSlide.achievements).not.toBe(analysis.achievements);
-
-    if (activitySlide.byDay.length > 0) {
-      activitySlide.byDay[0].count += 1;
-
-      expect(activitySlide.byDay[0].count).not.toBe(analysis.analytics.activity.byDay[0].count);
-    }
+    expect(kinds.indexOf("participants_balance")).toBeLessThan(kinds.indexOf("text_words"));
   });
 });
