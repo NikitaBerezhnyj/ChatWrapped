@@ -1,0 +1,60 @@
+[data-story-theme="default"] {
+    /* Viewer */
+    --story-backdrop: #080809;
+    --story-brand: rgb(255 255 255 / 90%);
+    --story-footer: rgb(255 255 255 / 55%);
+    --story-decoration-border: rgb(255 255 255 / 28%);
+    --story-decoration-fill: rgb(255 255 255 / 8%);
+
+    /* Story viewer */
+    --story-background: #171719;
+    --story-text: #ffffff;
+    --story-muted: rgb(255 255 255 / 65%);
+    --story-accent: #d4ff43;
+
+    --story-overlay: rgb(0 0 0 / 22%);
+    --story-overlay-strong: rgb(0 0 0 / 65%);
+    --story-overlay-hover: rgb(255 255 255 / 18%);
+    --story-border: rgb(255 255 255 / 24%);
+    --story-border-subtle: rgb(255 255 255 / 20%);
+    --story-progress-track: rgb(255 255 255 / 28%);
+    --story-progress-fill: #ffffff;
+
+    /* Cover */
+    --slide-cover-background: #5828a8;
+    --slide-cover-muted: rgb(255 255 255 / 72%);
+    --slide-cover-accent: #ffffff;
+    --slide-cover-button-text: #211334;
+
+    /* Overview — volume */
+    --slide-overview-background: #ed542f;
+    --slide-overview-muted: rgb(255 255 255 / 72%);
+
+    /* Overview — duration */
+    --slide-duration-background: #123d43;
+    --slide-duration-muted: rgb(255 255 255 / 68%);
+    --slide-duration-accent: #9bffe9;
+
+    /* Overview — pace */
+    --slide-pace-background: #51400e;
+    --slide-pace-muted: rgb(255 255 255 / 68%);
+    --slide-pace-accent: #f8e99b;
+
+    /* Other categories */
+    --slide-activity-background: #173a65;
+    --slide-participants-background: #43245e;
+    --slide-text-background: #762b4d;
+    --slide-conversations-background: #175348;
+    --slide-achievements-background: #5b4519;
+
+    /* Finale */
+    --slide-finale-background: #211537;
+    --slide-finale-muted: rgb(255 255 255 / 65%);
+    --slide-finale-outline: rgb(255 255 255 / 85%);
+    --slide-finale-subtle: rgb(255 255 255 / 42%);
+    --slide-finale-button-text: #211537;
+    --slide-finale-button-hover: #d9c7ff;
+
+    /* Temporary slides */
+    --slide-placeholder-background: #25252b;
+}
