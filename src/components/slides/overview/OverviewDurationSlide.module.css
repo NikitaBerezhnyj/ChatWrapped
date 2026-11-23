@@ -1,0 +1,66 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-duration-background);
+    --slide-muted: var(--slide-duration-muted);
+
+    justify-content: center;
+    background: var(--slide-duration-background);
+}
+
+.kicker {
+    composes: kicker from "../SlideLayout.module.css";
+}
+
+.displayTitle {
+    composes: displayTitle from "../SlideLayout.module.css";
+}
+
+.slideFootnote {
+    composes: slideFootnote from "../SlideLayout.module.css";
+}
+
+.durationHighlight {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 36px 0;
+}
+
+.durationHighlight strong {
+    color: var(--slide-duration-accent);
+    font-size: clamp(44px, 11vw, 76px);
+    font-weight: 950;
+    letter-spacing: -0.075em;
+    line-height: 0.95;
+    overflow-wrap: anywhere;
+}
+
+.durationHighlight span {
+    color: var(--slide-duration-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+}
+
+.durationFooter {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.durationFooter strong {
+    color: var(--story-text);
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 1;
+}
+
+.durationFooter span {
+    color: var(--slide-duration-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+}

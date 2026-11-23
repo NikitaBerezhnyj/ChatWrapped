@@ -1,0 +1,62 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-pace-background);
+    --slide-muted: var(--slide-pace-muted);
+
+    justify-content: center;
+    background: var(--slide-pace-background);
+}
+
+.kicker {
+    composes: kicker from "../SlideLayout.module.css";
+}
+
+.displayTitle {
+    composes: displayTitle from "../SlideLayout.module.css";
+}
+
+.paceMetrics {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    margin-top: 34px;
+}
+
+.paceMetricPrimary,
+.paceMetric {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.paceMetricPrimary strong {
+    color: var(--slide-pace-accent);
+    font-size: clamp(48px, 12vw, 80px);
+    font-weight: 950;
+    letter-spacing: -0.08em;
+    line-height: 0.9;
+}
+
+.paceMetric strong {
+    color: var(--story-text);
+    font-size: clamp(30px, 7vw, 44px);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 1;
+}
+
+.paceMetricPrimary span,
+.paceMetric span {
+    color: var(--slide-pace-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .paceMetrics {
+        gap: 18px;
+        margin-top: 24px;
+    }
+}
