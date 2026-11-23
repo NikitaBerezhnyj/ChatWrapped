@@ -1,4 +1,5 @@
 export type { PresentationDataBuilder } from "./presentation-data-builder";
+export { LocalPresentationDataBuilder } from "./local-presentation-data-builder";
 
 export type {
   PresentationData,
@@ -14,4 +15,4 @@ export type {
   AchievementsSlide
 } from "./types";
 
-export { LocalPresentationDataBuilder } from "./local-presentation-data-builder";
+export * from "./formatting";

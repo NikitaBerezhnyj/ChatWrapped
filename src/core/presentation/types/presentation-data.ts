@@ -11,8 +11,6 @@ export interface PresentationParticipant {
 export interface PresentationSlideBase {
   id: string;
   type: PresentationSlideType;
-  title: string;
-  subtitle: string;
 }
 
 export interface CoverSlide extends PresentationSlideBase {

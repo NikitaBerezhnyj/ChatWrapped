@@ -31,8 +31,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "cover",
         type: "cover",
-        title: "Your conversation",
-        subtitle: "A story told through messages",
         chatTitle: chat.title,
         participants,
         totalMessages: analysis.analytics.overview.totalMessages,
@@ -41,8 +39,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "overview",
         type: "overview",
-        title: "The big picture",
-        subtitle: "Your conversation in numbers",
         totalMessages: analysis.analytics.overview.totalMessages,
         totalWords: analysis.analytics.overview.totalWords,
         totalCharacters: analysis.analytics.overview.totalCharacters,
@@ -52,8 +48,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "activity",
         type: "activity",
-        title: "When you talked",
-        subtitle: "A look at your conversation habits",
         mostActiveDay: analysis.analytics.activity.mostActiveDay,
         mostActiveHour: analysis.analytics.activity.mostActiveHour,
         longestActiveStreak: analysis.analytics.activity.longestActiveStreak,
@@ -63,8 +57,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "participants",
         type: "participants",
-        title: "Who's behind the messages?",
-        subtitle: "A comparison of conversation participants",
         participants: analysis.analytics.participants.map(participant => ({
           id: participant.participantId,
           name: participantNames.get(participant.participantId) ?? participant.participantId,
@@ -78,8 +70,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "text",
         type: "text",
-        title: "The language of your conversation",
-        subtitle: "Words, phrases and emojis that stood out",
         mostFrequentWords: analysis.analytics.text.mostFrequentWords,
         mostFrequentPhrases: analysis.analytics.text.mostFrequentPhrases,
         mostFrequentEmojis: analysis.analytics.text.mostFrequentEmojis,
@@ -93,8 +83,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "conversations",
         type: "conversations",
-        title: "Every conversation counts",
-        subtitle: "How your conversations unfolded",
         totalConversations: analysis.analytics.conversations.totalConversations,
         averageDurationMs: analysis.analytics.conversations.averageDurationMs,
         longestDurationMs: analysis.analytics.conversations.longestDurationMs,
@@ -106,8 +94,6 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       {
         id: "achievements",
         type: "achievements",
-        title: "Your achievements",
-        subtitle: "Milestones from your conversation",
         achievements: analysis.achievements
       }
     ];
