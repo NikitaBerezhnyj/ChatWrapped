@@ -1,0 +1,145 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-activity-background);
+    --slide-muted: var(--story-muted);
+
+    justify-content: center;
+    background: var(--slide-activity-background);
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+}
+
+.titleGroup {
+    position: relative;
+}
+
+.titleGroup h2 {
+    max-width: 100%;
+}
+
+.outlineText {
+    display: block;
+    margin-top: 8px;
+    color: transparent;
+    font-size: clamp(30px, 8vw, 52px);
+    font-weight: 950;
+    letter-spacing: -0.07em;
+    line-height: 0.95;
+    -webkit-text-stroke: 1px var(--story-decoration-border);
+}
+
+.streakMetric {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-top: 42px;
+}
+
+.streakMetric strong {
+    color: var(--story-accent);
+    font-size: clamp(100px, 28vw, 176px);
+    font-weight: 950;
+    letter-spacing: -0.11em;
+    line-height: 0.72;
+    overflow-wrap: anywhere;
+}
+
+.metricLabel {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 5px;
+}
+
+.metricLabel span:first-child {
+    color: var(--story-text);
+    font-size: 18px;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+}
+
+.metricLabel span:last-child {
+    max-width: 90px;
+    color: var(--story-muted);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    line-height: 1.5;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 42px;
+}
+
+.emptyState strong {
+    color: var(--story-accent);
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+.emptyState span {
+    color: var(--story-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.bottomMark {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 36px;
+}
+
+.bottomMark span {
+    height: 5px;
+    background: var(--story-decoration-fill);
+    border: 1px solid var(--story-decoration-border);
+    border-radius: 2px;
+}
+
+.bottomMark span:first-child,
+.bottomMark span:last-child {
+    background: var(--story-accent);
+    border-color: var(--story-accent);
+}
+
+@media (max-width: 360px) {
+    .streakMetric {
+        gap: 12px;
+        margin-top: 32px;
+    }
+
+    .metricLabel span:first-child {
+        font-size: 15px;
+    }
+
+    .bottomMark {
+        gap: 4px;
+        margin-top: 28px;
+    }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .streakMetric {
+        margin-top: 28px;
+    }
+
+    .bottomMark {
+        margin-top: 24px;
+    }
+}

@@ -1,0 +1,111 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-activity-background);
+    --slide-muted: var(--story-muted);
+
+    justify-content: center;
+    background: var(--slide-activity-background);
+}
+
+.heroMetric {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 28px;
+}
+
+.heroMetric strong {
+    color: var(--story-accent);
+    font-size: clamp(76px, 19vw, 124px);
+    font-weight: 950;
+    letter-spacing: -0.09em;
+    line-height: 0.85;
+    overflow-wrap: anywhere;
+}
+
+.heroMetric span {
+    color: var(--story-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+}
+
+.peakDate {
+    position: relative;
+    z-index: 2;
+    margin-top: 8px;
+    color: var(--story-text);
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 850;
+    letter-spacing: -0.045em;
+}
+
+.peakGrid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--story-decoration-border);
+}
+
+.peakItem {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.peakLabel {
+    color: var(--story-muted);
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+}
+
+.peakItem strong {
+    color: var(--story-text);
+    font-size: clamp(15px, 3.8vw, 20px);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.peakCount {
+    color: var(--story-muted);
+    font-size: 9px;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+@media (max-width: 360px) {
+    .peakGrid {
+        gap: 8px;
+        margin-top: 24px;
+    }
+
+    .peakLabel {
+        font-size: 7px;
+    }
+
+    .peakCount {
+        font-size: 8px;
+    }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .heroMetric {
+        margin-top: 18px;
+    }
+
+    .peakGrid {
+        margin-top: 22px;
+        padding-top: 14px;
+    }
+}

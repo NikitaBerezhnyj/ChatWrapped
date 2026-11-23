@@ -1,0 +1,117 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: #101f36;
+    --slide-muted: rgb(255 255 255 / 58%);
+
+    justify-content: center;
+    background: #101f36;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+}
+
+.gapMetric {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 48px;
+}
+
+.metricLabel,
+.metricCaption {
+    color: var(--story-muted);
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 0.16em;
+    line-height: 1.5;
+}
+
+.gapMetric strong {
+    max-width: 100%;
+    color: var(--story-accent);
+    font-size: clamp(42px, 11vw, 76px);
+    font-weight: 950;
+    letter-spacing: -0.075em;
+    line-height: 0.95;
+    overflow-wrap: anywhere;
+}
+
+.metricCaption {
+    color: var(--story-text);
+    letter-spacing: 0.12em;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 48px;
+}
+
+.emptyState strong {
+    color: var(--story-accent);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+.emptyState span {
+    color: var(--story-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.pauseMark {
+    position: absolute;
+    right: 32px;
+    bottom: 112px;
+    z-index: 1;
+    display: flex;
+    gap: 9px;
+    opacity: 0.14;
+    transform: rotate(12deg);
+}
+
+.pauseMark span {
+    display: block;
+    width: 20px;
+    height: 100px;
+    background: var(--story-text);
+    border-radius: 3px;
+}
+
+@media (max-width: 360px) {
+    .gapMetric {
+        gap: 10px;
+        margin-top: 36px;
+    }
+
+    .pauseMark {
+        right: 20px;
+        bottom: 100px;
+    }
+
+    .pauseMark span {
+        width: 15px;
+        height: 76px;
+    }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .gapMetric {
+        margin-top: 30px;
+    }
+
+    .pauseMark {
+        bottom: 90px;
+    }
+}

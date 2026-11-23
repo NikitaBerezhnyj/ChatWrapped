@@ -1,0 +1,168 @@
+.slide {
+    composes: slide from "../SlideLayout.module.css";
+
+    --slide-background: var(--slide-activity-background);
+    --slide-muted: var(--story-muted);
+
+    justify-content: center;
+    background: var(--slide-activity-background);
+}
+
+.peakSummary {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 30px;
+}
+
+.summaryLabel {
+    color: var(--story-muted);
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+}
+
+.peakSummary strong {
+    color: var(--story-accent);
+    font-size: clamp(28px, 7vw, 42px);
+    font-weight: 950;
+    letter-spacing: -0.065em;
+    line-height: 1;
+}
+
+.summaryCount {
+    color: var(--story-text);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.chart {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 180px;
+    align-items: flex-end;
+    gap: 10px;
+    overflow-x: auto;
+    margin-top: 32px;
+    padding: 0 0 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--story-decoration-border) transparent;
+}
+
+.monthColumn {
+    display: flex;
+    min-width: 30px;
+    flex: 1 0 30px;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+}
+
+.barTrack {
+    display: flex;
+    width: 100%;
+    height: 132px;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--story-decoration-fill);
+    border-radius: 4px 4px 2px 2px;
+}
+
+.bar {
+    display: block;
+    width: 100%;
+    min-height: 2px;
+    background: rgb(255 255 255 / 55%);
+    border-radius: 4px 4px 2px 2px;
+    transition: height 250ms ease;
+}
+
+.peakBar {
+    background: var(--story-accent);
+}
+
+.monthLabel {
+    color: var(--story-text);
+    font-size: 9px;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.yearLabel {
+    color: var(--story-muted);
+    font-size: 7px;
+    font-weight: 700;
+}
+
+.chartCaption {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    color: var(--story-muted);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.emptyState {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 36px;
+}
+
+.emptyState strong {
+    color: var(--story-accent);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+.emptyState span {
+    color: var(--story-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+@media (max-width: 360px) {
+    .peakSummary {
+        margin-top: 24px;
+    }
+
+    .chart {
+        gap: 7px;
+        margin-top: 24px;
+    }
+
+    .monthColumn {
+        min-width: 26px;
+        flex-basis: 26px;
+    }
+
+    .barTrack {
+        height: 112px;
+    }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+    .peakSummary {
+        margin-top: 20px;
+    }
+
+    .chart {
+        min-height: 150px;
+        margin-top: 20px;
+    }
+
+    .barTrack {
+        height: 108px;
+    }
+}
