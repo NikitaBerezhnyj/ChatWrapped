@@ -25,7 +25,7 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       ...this.buildParticipantSlides(participants),
       ...this.buildTextSlides(analysis),
       ...this.buildConversationSlides(analysis),
-      ...this.buildAchievementSlides(unlockedAchievements),
+      ...this.buildAchievementSlides(unlockedAchievements, participants),
       this.buildFinaleSlide(chat, analysis, participants.length)
     ];
 
@@ -272,24 +272,31 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
   }
 
   private buildAchievementSlides(
-    unlockedAchievements: ChatAnalysisResult["achievements"]
+    unlockedAchievements: ChatAnalysisResult["achievements"],
+    participants: ParticipantStatistics[]
   ): PresentationSlide[] {
     if (unlockedAchievements.length === 0) {
       return [];
     }
 
+    const namesById = new Map(participants.map(participant => [participant.id, participant.name]));
+
     const singleSlides: PresentationSlide[] = unlockedAchievements.map(achievement => ({
       id: `achievement-${achievement.id}`,
       type: "achievements",
       kind: "achievement",
-      achievement: { ...achievement }
+      achievement: { ...achievement, holderIds: [...achievement.holderIds] },
+      holders: achievement.holderIds.map(id => ({ id, name: namesById.get(id) ?? id }))
     }));
 
     const recapSlide: PresentationSlide = {
       id: "achievements-recap",
       type: "achievements",
       kind: "achievements_recap",
-      achievements: unlockedAchievements.map(achievement => ({ ...achievement }))
+      achievements: unlockedAchievements.map(achievement => ({
+        ...achievement,
+        holderIds: [...achievement.holderIds]
+      }))
     };
 
     return [...singleSlides, recapSlide];

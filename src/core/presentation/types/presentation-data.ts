@@ -201,6 +201,7 @@ export interface AchievementSlide extends PresentationSlideBase {
   type: "achievements";
   kind: "achievement";
   achievement: Achievement;
+  holders: PresentationParticipant[];
 }
 
 export interface AchievementsRecapSlide extends PresentationSlideBase {

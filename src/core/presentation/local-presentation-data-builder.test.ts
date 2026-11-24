@@ -248,4 +248,44 @@ describe("LocalPresentationDataBuilder", () => {
 
     expect(balance.participants.map(participant => participant.id)).toEqual(["user-1", "user-2"]);
   });
+
+  it("gives chat-wide achievements no holders", async () => {
+    const chat = createChat();
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const slide = result.slides.find(
+      item => item.kind === "achievement" && item.achievement.id === "speed_demon"
+    );
+
+    if (slide?.kind !== "achievement") {
+      throw new Error("Speed Demon slide was not generated");
+    }
+
+    expect(slide.holders).toEqual([]);
+  });
+
+  it("lists who earned a participant achievement", async () => {
+    const messages = Array.from({ length: 1_000 }, (_, index) => ({
+      id: String(index),
+      senderId: "user-1",
+      timestamp: 1_000 + index * 1_000,
+      type: "text" as const,
+      text: "Hello"
+    }));
+
+    const chat = createChat({ messages });
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const slide = result.slides.find(
+      item => item.kind === "achievement" && item.achievement.id === "chatterbox"
+    );
+
+    if (slide?.kind !== "achievement") {
+      throw new Error("Chatterbox slide was not generated");
+    }
+
+    expect(slide.holders).toEqual([{ id: "user-1", name: "Alice" }]);
+  });
 });

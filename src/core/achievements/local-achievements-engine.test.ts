@@ -1,7 +1,23 @@
 import { describe, expect, it } from "vitest";
-import type { AnalyticsResult } from "../analytics";
+import type { AnalyticsResult, ParticipantStats } from "../analytics";
 import { achievementDefinitions } from "./definitions";
 import { LocalAchievementsEngine } from "./local-achievements-engine";
+
+function createParticipant(overrides: Partial<ParticipantStats> = {}): ParticipantStats {
+  return {
+    participantId: "user-1",
+    messageCount: 0,
+    messageShare: 0,
+    wordCount: 0,
+    wordShare: 0,
+    characterCount: 0,
+    averageMessageLength: 0,
+    nightMessages: 0,
+    emojiCount: 0,
+    startedConversations: 0,
+    ...overrides
+  };
+}
 
 function createAnalytics(overrides: Partial<AnalyticsResult> = {}): AnalyticsResult {
   return {
@@ -62,13 +78,14 @@ describe("LocalAchievementsEngine", () => {
   it("returns achievement metadata", () => {
     const result = engine.evaluate(createAnalytics());
 
-    expect(result[0]).toEqual({
-      id: "first_contact",
+    expect(result.find(achievement => achievement.id === "marathon")).toEqual({
+      id: "marathon",
       category: "general",
-      title: "First Contact",
-      description: "Sent your first message.",
-      icon: "message-circle",
-      unlocked: false
+      title: "Marathon",
+      description: "Exchanged 1,000 or more messages.",
+      icon: "trophy",
+      unlocked: false,
+      holderIds: []
     });
   });
 
@@ -76,15 +93,14 @@ describe("LocalAchievementsEngine", () => {
     const analytics = createAnalytics({
       overview: {
         ...createAnalytics().overview,
-        totalMessages: 1
+        totalMessages: 1_000
       }
     });
 
-    const result = engine.evaluate(analytics);
+    const marathon = engine.evaluate(analytics).find(achievement => achievement.id === "marathon");
 
-    const firstContact = result.find(achievement => achievement.id === "first_contact");
-
-    expect(firstContact?.unlocked).toBe(true);
+    expect(marathon?.unlocked).toBe(true);
+    expect(marathon?.holderIds).toEqual([]);
   });
 
   it("keeps achievements locked when their conditions are not met", () => {
@@ -110,5 +126,48 @@ describe("LocalAchievementsEngine", () => {
 
     expect(firstResult).not.toBe(secondResult);
     expect(firstResult).not.toBe(secondResult);
+  });
+
+  it("lists every participant who earned a participant achievement", () => {
+    const analytics = createAnalytics({
+      participants: [
+        createParticipant({ participantId: "user-1", messageCount: 1_500 }),
+        createParticipant({ participantId: "user-2", messageCount: 1_000 }),
+        createParticipant({ participantId: "user-3", messageCount: 10 })
+      ]
+    });
+
+    const chatterbox = engine
+      .evaluate(analytics)
+      .find(achievement => achievement.id === "chatterbox");
+
+    expect(chatterbox?.unlocked).toBe(true);
+    expect(chatterbox?.holderIds).toEqual(["user-1", "user-2"]);
+  });
+
+  it("keeps a participant achievement locked when nobody earned it", () => {
+    const analytics = createAnalytics({
+      participants: [createParticipant({ messageCount: 10 })]
+    });
+
+    const chatterbox = engine
+      .evaluate(analytics)
+      .find(achievement => achievement.id === "chatterbox");
+
+    expect(chatterbox?.unlocked).toBe(false);
+    expect(chatterbox?.holderIds).toEqual([]);
+  });
+
+  it("counts night messages per participant", () => {
+    const analytics = createAnalytics({
+      participants: [
+        createParticipant({ participantId: "user-1", nightMessages: 60 }),
+        createParticipant({ participantId: "user-2", nightMessages: 60 })
+      ]
+    });
+
+    const nightOwl = engine.evaluate(analytics).find(achievement => achievement.id === "night_owl");
+
+    expect(nightOwl?.unlocked).toBe(false);
   });
 });

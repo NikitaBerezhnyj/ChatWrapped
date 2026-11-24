@@ -1,11 +1,8 @@
-import { activityAchievements } from "./activity-achievements";
-import { generalAchievements } from "./general-achievements";
+import type { AchievementDefinition } from "../types";
+import { chatAchievements } from "./chat-achievements";
 import { participantAchievements } from "./participant-achievements";
-import { textAchievements } from "./text-achievements";
 
-export const achievementDefinitions = [
-  ...generalAchievements,
-  ...activityAchievements,
-  ...textAchievements,
+export const achievementDefinitions: AchievementDefinition[] = [
+  ...chatAchievements,
   ...participantAchievements
 ];

@@ -58,11 +58,9 @@ describe("LocalChatAnalysisPipeline", () => {
   it("evaluates achievements using analytics results", async () => {
     const result = await pipeline.analyze(createChat());
 
-    const firstContact = result.achievements.find(
-      achievement => achievement.id === "first_contact"
-    );
+    const speedDemon = result.achievements.find(achievement => achievement.id === "speed_demon");
 
-    expect(firstContact?.unlocked).toBe(true);
+    expect(speedDemon?.unlocked).toBe(true);
   });
 
   it("passes analysis options to the analytics engine", async () => {
@@ -102,12 +100,7 @@ describe("LocalChatAnalysisPipeline", () => {
 
     expect(result.analytics.overview.totalMessages).toBe(1);
     expect(result.analytics.participants).toHaveLength(1);
-
-    const firstContact = result.achievements.find(
-      achievement => achievement.id === "first_contact"
-    );
-
-    expect(firstContact?.unlocked).toBe(true);
+    expect(result.achievements.every(achievement => !achievement.unlocked)).toBe(true);
   });
 
   it("does not mutate the original chat", async () => {
