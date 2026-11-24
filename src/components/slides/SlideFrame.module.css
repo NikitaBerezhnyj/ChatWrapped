@@ -1,0 +1,83 @@
+.frame {
+    --fs-title: calc(var(--u) * 11);
+    --fs-hero: calc(var(--u) * 30);
+    --fs-label: max(11px, calc(var(--u) * 2.6));
+    --gap: calc(var(--u) * 7);
+    --tone-accent: var(--story-accent);
+    --fs-body: max(13px, calc(var(--u) * 3.4));
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: calc(var(--u) * 20) calc(var(--u) * 7) calc(var(--u) * 14);
+    overflow: hidden;
+    color: var(--story-text);
+    background: var(--tone-bg);
+}
+
+.frame[data-tone="overview"] {
+    --tone-bg: var(--slide-overview-background);
+    --tone-accent: var(--story-text);
+}
+
+.frame[data-tone="duration"] {
+    --tone-bg: var(--slide-duration-background);
+    --tone-accent: var(--slide-duration-accent);
+}
+
+.frame[data-tone="pace"] {
+    --tone-bg: var(--slide-pace-background);
+    --tone-accent: var(--slide-pace-accent);
+}
+
+.frame[data-tone="activity"] {
+    --tone-bg: var(--slide-activity-background);
+}
+
+.frame[data-tone="participants"] {
+    --tone-bg: var(--slide-participants-background);
+}
+
+.frame[data-tone="text"] {
+    --tone-bg: var(--slide-text-background);
+}
+
+.frame[data-tone="conversations"] {
+    --tone-bg: var(--slide-conversations-background);
+    --tone-accent: var(--slide-conversations-accent);
+}
+
+.frame[data-tone="achievements"] {
+    --tone-bg: var(--slide-achievements-background);
+    --tone-accent: var(--slide-achievements-accent);
+}
+
+.body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    gap: var(--gap);
+}
+
+.kicker,
+.footnote {
+    color: var(--story-muted);
+    font-size: var(--fs-label);
+    font-weight: 800;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.kicker {
+    margin-bottom: calc(var(--u) * 5);
+    letter-spacing: 0.18em;
+}
+
+.footnote {
+    padding-top: calc(var(--u) * 6);
+    letter-spacing: 0.1em;
+}

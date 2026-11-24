@@ -1,0 +1,88 @@
+.chart {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 3);
+}
+
+.header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(var(--u) * 3);
+    font-size: var(--fs-label);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.title {
+    color: var(--story-text);
+}
+
+.note {
+    color: var(--tone-accent);
+    text-align: right;
+}
+
+.bars {
+    display: flex;
+    align-items: flex-start;
+    gap: calc(var(--u) * 1);
+}
+
+.bars[data-dense] {
+    gap: calc(var(--u) * 0.3);
+}
+
+.column {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--u) * 1.5);
+}
+
+.track {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    height: calc(var(--u) * 16);
+    overflow: hidden;
+    background: var(--story-decoration-fill);
+    border-radius: calc(var(--u) * 0.8);
+}
+
+.bars[data-size="md"] .track {
+    height: calc(var(--u) * 22);
+}
+
+.fill {
+    display: block;
+    width: 100%;
+    min-height: 2px;
+    background: rgb(255 255 255 / 55%);
+    border-radius: inherit;
+}
+
+.fill[data-highlight] {
+    background: var(--tone-accent);
+}
+
+.label,
+.sublabel {
+    font-size: var(--fs-label);
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.label {
+    color: var(--story-text);
+}
+
+.sublabel {
+    color: var(--story-muted);
+    font-weight: 700;
+}
