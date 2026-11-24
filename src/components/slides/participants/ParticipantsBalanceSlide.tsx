@@ -2,7 +2,9 @@ import type {
   ParticipantsBalanceSlide as ParticipantsBalanceSlideData,
   PreparedPresentation
 } from "../../../core/presentation";
-import layout from "../SlideLayout.module.css";
+import { ShareBar } from "../ShareBar";
+import { SlideFrame } from "../SlideFrame";
+import { Title } from "../Title";
 import styles from "./ParticipantsBalanceSlide.module.css";
 
 interface Props {
@@ -10,73 +12,52 @@ interface Props {
   formatters: PreparedPresentation["formatters"];
 }
 
+const MAX_LISTED = 5;
+
 export function ParticipantsBalanceSlide({ slide, formatters }: Props) {
-  const participants = [...slide.participants].sort((a, b) => b.messageCount - a.messageCount);
+  const { participants } = slide;
+
+  const listed = participants.slice(0, MAX_LISTED);
+  const hiddenCount = participants.length - listed.length;
 
   const totalMessages = participants.reduce(
     (total, participant) => total + participant.messageCount,
     0
   );
 
-  const hasMessages = totalMessages > 0;
+  const participantsLabel = participants.length === 1 ? "PARTICIPANT" : "PARTICIPANTS";
 
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>THE PEOPLE BEHIND THE MESSAGES</span>
+    <SlideFrame
+      tone="participants"
+      kicker="THE PEOPLE BEHIND THE MESSAGES"
+      footnote={`${formatters.formatNumber(participants.length)} ${participantsLabel} · ${formatters.formatNumber(totalMessages)} MESSAGES`}
+    >
+      <Title lines={["Every person", "made this", "conversation."]} />
 
-      <h2 className={layout.displayTitle}>
-        Every person
-        <br />
-        made this
-        <br />
-        conversation.
-      </h2>
-
-      <div className={styles.summary}>
-        <strong>{formatters.formatNumber(participants.length)}</strong>
-        <span>{participants.length === 1 ? "PARTICIPANT" : "PARTICIPANTS"}</span>
-      </div>
-
-      {participants.length > 0 ? (
-        <div className={styles.participantList}>
-          {participants.map((participant, index) => (
-            <div className={styles.participant} key={participant.id}>
-              <div className={styles.participantHeader}>
-                <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
-
-                <span className={styles.name} title={participant.name}>
-                  {participant.name}
-                </span>
-
-                <span className={styles.share}>
-                  {formatters.formatPercentage(participant.messageShare)}
-                </span>
-              </div>
-
-              <div className={styles.barTrack}>
-                <span
-                  className={styles.bar}
-                  style={{
-                    width: hasMessages
-                      ? `${Math.max(0, Math.min(100, participant.messageShare * 100))}%`
-                      : "0%"
-                  }}
-                />
-              </div>
-
-              <span className={styles.messageCount}>
-                {formatters.formatNumber(participant.messageCount)} messages
+      <ol className={styles.list}>
+        {listed.map((participant, index) => (
+          <li className={styles.item} key={participant.id}>
+            <div className={styles.row}>
+              <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
+              <span className={styles.name}>{participant.name}</span>
+              <span className={styles.share}>
+                {formatters.formatPercentage(participant.messageShare)}
               </span>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className={styles.emptyState}>No participants found.</p>
-      )}
 
-      <span className={layout.slideFootnote}>
-        {formatters.formatNumber(totalMessages)} MESSAGES, ONE SHARED STORY
-      </span>
-    </section>
+            <ShareBar value={participant.messageShare} />
+
+            <span className={styles.count}>
+              {formatters.formatNumber(participant.messageCount)} messages
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      {hiddenCount > 0 && (
+        <p className={styles.more}>+ {formatters.formatNumber(hiddenCount)} MORE</p>
+      )}
+    </SlideFrame>
   );
 }

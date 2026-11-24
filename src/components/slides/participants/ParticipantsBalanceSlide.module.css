@@ -1,78 +1,40 @@
-.slide {
-    composes: slide from "../SlideLayout.module.css";
-
-    --slide-background: var(--slide-participants-background);
-    --slide-muted: var(--story-muted);
-
-    justify-content: center;
-    background: var(--slide-participants-background);
-}
-
-.summary {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-top: 24px;
-}
-
-.summary strong {
-    color: var(--story-accent);
-    font-size: 42px;
-    font-weight: 950;
-    letter-spacing: -0.08em;
-    line-height: 1;
-}
-
-.summary span {
-    color: var(--story-muted);
-    font-size: 9px;
-    font-weight: 850;
-    letter-spacing: 0.14em;
-}
-
-.participantList {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    max-height: 330px;
-    flex-direction: column;
-    gap: 17px;
-    overflow-y: auto;
-    margin-top: 28px;
-    padding-right: 5px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--story-decoration-border) transparent;
-}
-
-.participant {
+.list {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: calc(var(--u) * 4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.item {
+    display: flex;
     min-width: 0;
+    flex-direction: column;
+    gap: calc(var(--u) * 1.5);
 }
 
-.participantHeader {
+.row {
     display: flex;
     align-items: baseline;
-    gap: 9px;
+    gap: calc(var(--u) * 2.5);
     min-width: 0;
 }
 
 .rank {
-    flex: 0 0 20px;
+    flex: none;
+    width: calc(var(--u) * 5);
     color: var(--story-muted);
-    font-size: 9px;
+    font-size: var(--fs-label);
     font-weight: 800;
     font-variant-numeric: tabular-nums;
 }
 
 .name {
     flex: 1;
+    min-width: 0;
     overflow: hidden;
-    color: var(--story-text);
-    font-size: 13px;
+    font-size: calc(var(--u) * 3.6);
     font-weight: 850;
     letter-spacing: -0.025em;
     text-overflow: ellipsis;
@@ -80,65 +42,23 @@
 }
 
 .share {
-    flex: 0 0 auto;
-    color: var(--story-accent);
-    font-size: 11px;
+    flex: none;
+    color: var(--tone-accent);
+    font-size: calc(var(--u) * 3);
     font-weight: 850;
     font-variant-numeric: tabular-nums;
 }
 
-.barTrack {
-    width: 100%;
-    height: 5px;
-    overflow: hidden;
-    background: var(--story-decoration-fill);
-    border-radius: 3px;
-}
-
-.bar {
-    display: block;
-    height: 100%;
-    background: var(--story-accent);
-    border-radius: inherit;
-}
-
-.messageCount {
+.count {
     color: var(--story-muted);
-    font-size: 9px;
+    font-size: var(--fs-label);
     font-weight: 650;
 }
 
-.emptyState {
-    position: relative;
-    z-index: 2;
-    margin-top: 28px;
+.more {
+    margin: 0;
     color: var(--story-muted);
-    font-size: 13px;
-}
-
-@media (max-width: 360px) {
-    .summary {
-        margin-top: 18px;
-    }
-
-    .participantList {
-        gap: 13px;
-        margin-top: 22px;
-    }
-
-    .name {
-        font-size: 12px;
-    }
-}
-
-@media (max-height: 700px) and (min-width: 601px) {
-    .summary {
-        margin-top: 16px;
-    }
-
-    .participantList {
-        max-height: 250px;
-        gap: 12px;
-        margin-top: 18px;
-    }
+    font-size: var(--fs-label);
+    font-weight: 800;
+    letter-spacing: 0.12em;
 }
