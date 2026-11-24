@@ -1,5 +1,6 @@
 import type { ChatData } from "../models";
 import type { ChatAnalysisResult } from "../pipeline";
+import { fillMissingMonths } from "./fill-missing-months";
 import type { PresentationDataBuilder } from "./presentation-data-builder";
 import type { ParticipantStatistics, PresentationData, PresentationSlide } from "./types";
 
@@ -144,12 +145,14 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       });
     }
 
-    if (activity.byMonth.length >= MIN_MONTHS_FOR_MONTHLY_HISTORY) {
+    const byMonth = fillMissingMonths(activity.byMonth);
+
+    if (byMonth.length >= MIN_MONTHS_FOR_MONTHLY_HISTORY) {
       slides.push({
         id: "activity-monthly",
         type: "activity",
         kind: "activity_monthly",
-        byMonth: activity.byMonth.map(item => ({ ...item }))
+        byMonth
       });
     }
 
