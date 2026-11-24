@@ -18,7 +18,7 @@
     "emoji-regex": "^11.0.0",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
-    "lucide-react": "^1.78.0",
+    "lucide-react": "^1.79.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "recharts": "^3.11.0",
