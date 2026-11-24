@@ -17,6 +17,10 @@
     background: var(--tone-bg);
 }
 
+.frame[data-tone="cover"] {
+    --tone-bg: var(--slide-cover-background);
+}
+
 .frame[data-tone="overview"] {
     --tone-bg: var(--slide-overview-background);
     --tone-accent: var(--story-text);
@@ -52,6 +56,10 @@
 .frame[data-tone="achievements"] {
     --tone-bg: var(--slide-achievements-background);
     --tone-accent: var(--slide-achievements-accent);
+}
+
+.frame[data-tone="finale"] {
+    --tone-bg: var(--slide-finale-background);
 }
 
 .body {

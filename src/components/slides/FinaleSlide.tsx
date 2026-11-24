@@ -1,7 +1,9 @@
 import { RotateCcw } from "lucide-react";
 import type { FinaleSlide as FinaleSlideData, PreparedPresentation } from "../../core/presentation";
 import styles from "./FinaleSlide.module.css";
-import layout from "./SlideLayout.module.css";
+import { PillButton } from "./PillButton";
+import { SlideFrame } from "./SlideFrame";
+import { Title } from "./Title";
 
 interface Props {
   slide: FinaleSlideData;
@@ -10,46 +12,32 @@ interface Props {
 }
 
 export function FinaleSlide({ slide, formatters, onReplay }: Props) {
+  const stats = [
+    { value: formatters.formatCompactNumber(slide.totalMessages), label: "MESSAGES" },
+    { value: formatters.formatCompactNumber(slide.totalWords), label: "WORDS" },
+    { value: formatters.formatNumber(slide.totalParticipants), label: "PARTICIPANTS" },
+    { value: formatters.formatNumber(slide.activeDays), label: "ACTIVE DAYS" }
+  ];
+
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>CHAT WRAPPED</span>
-
-      <div className={styles.finaleHeading}>
-        <span>And that's</span>
-        <span className={styles.outlineText}>a wrap.</span>
+    <SlideFrame tone="finale" kicker="CHAT WRAPPED" footnote="YOUR STORY. YOUR NUMBERS.">
+      <div className={styles.heading}>
+        <Title display lines={["And that's", "a wrap."]} outlineLine={1} />
+        <p className={styles.chatTitle}>{slide.chatTitle}</p>
       </div>
 
-      <p className={styles.finaleChatTitle}>{slide.chatTitle}</p>
+      <ul className={styles.stats}>
+        {stats.map(stat => (
+          <li className={styles.stat} key={stat.label}>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </li>
+        ))}
+      </ul>
 
-      <div className={styles.finaleStats}>
-        <div>
-          <strong>{formatters.formatCompactNumber(slide.totalMessages)}</strong>
-          <span>MESSAGES</span>
-        </div>
-
-        <div>
-          <strong>{formatters.formatCompactNumber(slide.totalWords)}</strong>
-          <span>WORDS</span>
-        </div>
-
-        <div>
-          <strong>{formatters.formatNumber(slide.totalParticipants)}</strong>
-          <span>PARTICIPANTS</span>
-        </div>
-
-        <div>
-          <strong>{formatters.formatNumber(slide.activeDays)}</strong>
-          <span>ACTIVE DAYS</span>
-        </div>
-      </div>
-
-      <div className={styles.finaleActions}>
-        <button className={styles.finaleReplayButton} type="button" onClick={onReplay}>
-          REPLAY STORY <RotateCcw width={20} />
-        </button>
-      </div>
-
-      <span className={styles.finaleBrand}>YOUR STORY. YOUR NUMBERS.</span>
-    </section>
+      <PillButton onClick={onReplay}>
+        REPLAY STORY <RotateCcw />
+      </PillButton>
+    </SlideFrame>
   );
 }

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import styles from "./SlideFrame.module.css";
 
 export type SlideTone =
+  | "cover"
   | "overview"
   | "duration"
   | "pace"
@@ -9,7 +10,8 @@ export type SlideTone =
   | "participants"
   | "text"
   | "conversations"
-  | "achievements";
+  | "achievements"
+  | "finale";
 
 interface Props {
   tone: SlideTone;

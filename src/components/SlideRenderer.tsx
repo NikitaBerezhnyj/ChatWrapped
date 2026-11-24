@@ -24,24 +24,15 @@ import { TextWordsSlide } from "./slides/text/TextWordsSlide";
 
 interface SlideRendererProps {
   slide: PresentationSlide;
-  chatTitle: string;
   formatters: PreparedPresentation["formatters"];
   onNext: () => void;
   onReplay: () => void;
 }
 
-export function SlideRenderer({
-  slide,
-  chatTitle,
-  formatters,
-  onNext,
-  onReplay
-}: SlideRendererProps) {
+export function SlideRenderer({ slide, formatters, onNext, onReplay }: SlideRendererProps) {
   switch (slide.kind) {
     case "cover":
-      return (
-        <CoverSlide slide={slide} chatTitle={chatTitle} formatters={formatters} onNext={onNext} />
-      );
+      return <CoverSlide slide={slide} formatters={formatters} onNext={onNext} />;
 
     case "overview_volume":
       return <OverviewVolumeSlide slide={slide} formatters={formatters} />;

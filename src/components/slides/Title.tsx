@@ -1,10 +1,18 @@
 import styles from "./Title.module.css";
 
-export function Title({ lines }: { lines: string[] }) {
+interface Props {
+  lines: string[];
+  display?: boolean;
+  outlineLine?: number;
+}
+
+export function Title({ lines, display, outlineLine }: Props) {
   return (
-    <h2 className={styles.title}>
-      {lines.map(line => (
-        <span key={line}>{line}</span>
+    <h2 className={styles.title} data-display={display || undefined}>
+      {lines.map((line, index) => (
+        <span key={line} data-outline={index === outlineLine || undefined}>
+          {line}
+        </span>
       ))}
     </h2>
   );
