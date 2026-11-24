@@ -1,9 +1,8 @@
 import type {
-  PreparedPresentation,
-  OverviewVolumeSlide as OverviewVolumeSlideData
+  OverviewVolumeSlide as OverviewVolumeSlideData,
+  PreparedPresentation
 } from "../../../core/presentation";
-import layout from "../SlideLayout.module.css";
-import styles from "./OverviewVolumeSlide.module.css";
+import { StatSlide } from "../StatSlide";
 
 interface Props {
   slide: OverviewVolumeSlideData;
@@ -12,47 +11,24 @@ interface Props {
 
 export function OverviewVolumeSlide({ slide, formatters }: Props) {
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>THE BIG PICTURE</span>
-
-      <h2 className={layout.displayTitle}>
-        A lot can happen
-        <br />
-        in a conversation.
-      </h2>
-
-      <div className={styles.heroMetric}>
-        <strong>{formatters.formatCompactNumber(slide.totalMessages)}</strong>
-        <span>MESSAGES EXCHANGED</span>
-      </div>
-
-      <div className={styles.metricGrid}>
-        <div>
-          <strong>{formatters.formatCompactNumber(slide.totalWords)}</strong>
-          <span>WORDS</span>
-        </div>
-
-        <div>
-          <strong>{formatters.formatCompactNumber(slide.totalCharacters)}</strong>
-          <span>CHARACTERS</span>
-        </div>
-
-        <div>
-          <strong>{formatters.formatNumber(slide.messagesWithText)}</strong>
-          <span>TEXT MESSAGES</span>
-        </div>
-
-        <div>
-          <strong>
-            {formatters.formatPercentage(
-              slide.totalMessages > 0 ? slide.messagesWithText / slide.totalMessages : 0
-            )}
-          </strong>
-          <span>WITH TEXT</span>
-        </div>
-      </div>
-
-      <span className={layout.slideFootnote}>THE NUMBERS BEHIND YOUR CHAT</span>
-    </section>
+    <StatSlide
+      tone="overview"
+      kicker="THE BIG PICTURE"
+      title={["A lot can happen", "in a conversation."]}
+      hero={{
+        value: formatters.formatCompactNumber(slide.totalMessages),
+        label: "MESSAGES EXCHANGED"
+      }}
+      stats={[
+        { value: formatters.formatCompactNumber(slide.totalWords), label: "WORDS" },
+        { value: formatters.formatCompactNumber(slide.totalCharacters), label: "CHARACTERS" },
+        { value: formatters.formatNumber(slide.messagesWithText), label: "TEXT MESSAGES" },
+        {
+          value: formatters.formatPercentage(slide.messagesWithText / slide.totalMessages),
+          label: "WITH TEXT"
+        }
+      ]}
+      footnote="THE NUMBERS BEHIND YOUR CHAT"
+    />
   );
 }

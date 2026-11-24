@@ -1,9 +1,8 @@
 import type {
-  PreparedPresentation,
-  OverviewDurationSlide as OverviewDurationSlideData
+  OverviewDurationSlide as OverviewDurationSlideData,
+  PreparedPresentation
 } from "../../../core/presentation";
-import layout from "../SlideLayout.module.css";
-import styles from "./OverviewDurationSlide.module.css";
+import { StatSlide } from "../StatSlide";
 
 interface Props {
   slide: OverviewDurationSlideData;
@@ -12,28 +11,17 @@ interface Props {
 
 export function OverviewDurationSlide({ slide, formatters }: Props) {
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>TIME WELL SPENT</span>
-
-      <h2 className={layout.displayTitle}>
-        This conversation
-        <br />
-        has been around.
-      </h2>
-
-      <div className={styles.durationHighlight}>
-        <strong>{formatters.formatDuration(slide.durationMs)}</strong>
-        <span>FROM FIRST MESSAGE TO LAST</span>
-      </div>
-
-      <div className={styles.durationFooter}>
-        <strong>{formatters.formatNumber(slide.activeDays)}</strong>
-        <span>ACTIVE DAYS</span>
-      </div>
-
-      <span className={layout.slideFootnote}>
-        {formatters.formatDateRange(slide.period.start, slide.period.end)}
-      </span>
-    </section>
+    <StatSlide
+      tone="duration"
+      kicker="TIME WELL SPENT"
+      title={["This conversation", "has been around."]}
+      hero={{
+        value: formatters.formatDuration(slide.durationMs),
+        label: "FROM FIRST MESSAGE TO LAST",
+        size: "md"
+      }}
+      stats={[{ value: formatters.formatNumber(slide.activeDays), label: "ACTIVE DAYS" }]}
+      footnote={formatters.formatDateRange(slide.period.start, slide.period.end)}
+    />
   );
 }
