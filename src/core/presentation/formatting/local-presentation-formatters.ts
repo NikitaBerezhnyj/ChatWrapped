@@ -1,48 +1,11 @@
-import type { PresentationSlideType } from "../types";
 import type {
   PresentationFormatterFactory,
-  PresentationFormatters,
-  SlideCopy
+  PresentationFormatters
 } from "./presentation-formatters";
 import {
   DEFAULT_PRESENTATION_FORMATTING_OPTIONS,
   type PresentationFormattingOptions
 } from "./presentation-formatting-options";
-
-const SLIDE_COPY: Record<PresentationSlideType, SlideCopy> = {
-  cover: {
-    title: "Your conversation",
-    subtitle: "A story told through messages"
-  },
-  overview: {
-    title: "The big picture",
-    subtitle: "Your conversation in numbers"
-  },
-  activity: {
-    title: "When you talked",
-    subtitle: "A look at your conversation habits"
-  },
-  participants: {
-    title: "Who's behind the messages?",
-    subtitle: "A comparison of conversation participants"
-  },
-  text: {
-    title: "The language of your conversation",
-    subtitle: "Words, phrases and emojis that stood out"
-  },
-  conversations: {
-    title: "Every conversation counts",
-    subtitle: "How your conversations unfolded"
-  },
-  achievements: {
-    title: "Your achievements",
-    subtitle: "Milestones from your conversation"
-  },
-  finale: {
-    title: "That's a wrap",
-    subtitle: "Every message made this story"
-  }
-};
 
 const EMPTY_DATE_RANGE = "No messages";
 
@@ -214,10 +177,6 @@ export class LocalPresentationFormatterFactory implements PresentationFormatterF
         }
 
         return (style === "long" ? longMonthFormatter : shortMonthFormatter).format(date);
-      },
-
-      getSlideCopy(type) {
-        return { ...SLIDE_COPY[type] };
       }
     };
   }

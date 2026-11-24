@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import type { PresentationSlideType } from "../types";
 import { LocalPresentationFormatterFactory } from "./local-presentation-formatters";
 import { DEFAULT_PRESENTATION_FORMATTING_OPTIONS } from "./presentation-formatting-options";
 
@@ -199,61 +198,6 @@ describe("LocalPresentationFormatterFactory", () => {
 
     it("returns the input when the month is invalid", () => {
       expect(formatters.formatMonth("oops")).toBe("oops");
-    });
-  });
-
-  describe("getSlideCopy", () => {
-    const expectedCopy: Record<
-      PresentationSlideType,
-      {
-        title: string;
-        subtitle: string;
-      }
-    > = {
-      cover: {
-        title: "Your conversation",
-        subtitle: "A story told through messages"
-      },
-      overview: {
-        title: "The big picture",
-        subtitle: "Your conversation in numbers"
-      },
-      activity: {
-        title: "When you talked",
-        subtitle: "A look at your conversation habits"
-      },
-      participants: {
-        title: "Who's behind the messages?",
-        subtitle: "A comparison of conversation participants"
-      },
-      text: {
-        title: "The language of your conversation",
-        subtitle: "Words, phrases and emojis that stood out"
-      },
-      conversations: {
-        title: "Every conversation counts",
-        subtitle: "How your conversations unfolded"
-      },
-      achievements: {
-        title: "Your achievements",
-        subtitle: "Milestones from your conversation"
-      },
-      finale: {
-        title: "That's a wrap",
-        subtitle: "Every message made this story"
-      }
-    };
-
-    it.each(Object.entries(expectedCopy))("returns correct copy for the %s slide", (type, copy) => {
-      expect(formatters.getSlideCopy(type as PresentationSlideType)).toEqual(copy);
-    });
-
-    it("returns an independent copy of slide text", () => {
-      const first = formatters.getSlideCopy("cover");
-      const second = formatters.getSlideCopy("cover");
-
-      expect(first).not.toBe(second);
-      expect(first).toEqual(second);
     });
   });
 

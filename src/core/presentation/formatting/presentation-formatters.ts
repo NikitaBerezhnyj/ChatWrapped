@@ -1,4 +1,3 @@
-import type { PresentationSlideType } from "../types";
 import type { PresentationFormattingOptions } from "./presentation-formatting-options";
 
 export interface SlideCopy {
@@ -24,8 +23,6 @@ export interface PresentationFormatters {
   formatDay(date: string): string;
 
   formatMonth(month: string, style?: "long" | "short"): string;
-
-  getSlideCopy(type: PresentationSlideType): SlideCopy;
 }
 
 export interface PresentationFormatterFactory {
