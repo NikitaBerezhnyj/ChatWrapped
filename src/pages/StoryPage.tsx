@@ -14,7 +14,7 @@ const LONG_PRESS_DELAY = 350;
 const SWIPE_THRESHOLD = 60;
 
 function StoryPage({ presentation, onClose }: StoryPageProps) {
-  const { slides, chatTitle } = presentation.data;
+  const { slides } = presentation.data;
   const { formatters } = presentation;
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -215,7 +215,7 @@ function StoryPage({ presentation, onClose }: StoryPageProps) {
   return (
     <main
       className={styles.viewer}
-      data-story-theme="neon-night"
+      data-story-theme="default"
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
@@ -257,7 +257,6 @@ function StoryPage({ presentation, onClose }: StoryPageProps) {
         <div className={styles.slideViewport} key={activeSlide.id}>
           <SlideRenderer
             slide={activeSlide}
-            chatTitle={chatTitle}
             formatters={formatters}
             onNext={next}
             onReplay={replay}
