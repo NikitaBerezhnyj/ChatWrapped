@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { NormalizedMessage } from "../../../normalization";
 import { analyzeOverview } from "./overview-analytics";
+import { DEFAULT_ANALYSIS_OPTIONS } from "../../types";
+
+function analyze(messages: NormalizedMessage[], timezone = DEFAULT_ANALYSIS_OPTIONS.timezone) {
+  return analyzeOverview(messages, { timezone });
+}
 
 function createMessage(overrides: Partial<NormalizedMessage> = {}): NormalizedMessage {
   return {
@@ -20,7 +25,7 @@ function createMessage(overrides: Partial<NormalizedMessage> = {}): NormalizedMe
 
 describe("analyzeOverview", () => {
   it("returns zero values for an empty chat", () => {
-    expect(analyzeOverview([])).toEqual({
+    expect(analyze([])).toEqual({
       totalMessages: 0,
       totalWords: 0,
       totalCharacters: 0,
@@ -49,7 +54,7 @@ describe("analyzeOverview", () => {
       })
     ];
 
-    const result = analyzeOverview(messages);
+    const result = analyze(messages);
 
     expect(result.totalMessages).toBe(2);
     expect(result.totalWords).toBe(5);
@@ -67,7 +72,7 @@ describe("analyzeOverview", () => {
       })
     ];
 
-    const result = analyzeOverview(messages);
+    const result = analyze(messages);
 
     expect(result.durationMs).toBe(2 * 24 * 60 * 60 * 1000);
   });
@@ -85,7 +90,7 @@ describe("analyzeOverview", () => {
       })
     ];
 
-    const result = analyzeOverview(messages);
+    const result = analyze(messages);
 
     expect(result.activeDays).toBe(2);
   });
@@ -100,7 +105,7 @@ describe("analyzeOverview", () => {
       })
     ];
 
-    const result = analyzeOverview(messages);
+    const result = analyze(messages);
 
     expect(result.averageMessagesPerActiveDay).toBe(1.5);
   });
@@ -120,7 +125,7 @@ describe("analyzeOverview", () => {
       })
     ];
 
-    const result = analyzeOverview(messages);
+    const result = analyze(messages);
 
     expect(result.totalMessages).toBe(2);
     expect(result.messagesWithText).toBe(1);
@@ -129,7 +134,7 @@ describe("analyzeOverview", () => {
   });
 
   it("handles a chat with one message", () => {
-    const result = analyzeOverview([createMessage()]);
+    const result = analyze([createMessage()]);
 
     expect(result.totalMessages).toBe(1);
     expect(result.durationMs).toBe(0);
@@ -147,6 +152,6 @@ describe("analyzeOverview", () => {
       timestamp: Date.UTC(2024, 0, 3)
     });
 
-    expect(analyzeOverview([first, second])).toEqual(analyzeOverview([second, first]));
+    expect(analyze([first, second])).toEqual(analyze([second, first]));
   });
 });

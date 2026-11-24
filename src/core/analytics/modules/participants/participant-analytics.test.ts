@@ -21,7 +21,8 @@ function createMessage(overrides: Partial<NormalizedMessage> = {}): NormalizedMe
 const defaultOptions = {
   conversationGapThresholdMs: 8 * 60 * 60 * 1000,
   nightStartHour: 0,
-  nightEndHour: 6
+  nightEndHour: 6,
+  timezone: "UTC"
 };
 
 describe("analyzeParticipants", () => {
@@ -148,12 +149,12 @@ describe("analyzeParticipants", () => {
       createMessage({
         id: "night",
         senderId: "user-1",
-        timestamp: Date.parse("2026-01-01T02:00:00")
+        timestamp: Date.parse("2026-01-01T02:00:00Z")
       }),
       createMessage({
         id: "day",
         senderId: "user-1",
-        timestamp: Date.parse("2026-01-01T12:00:00")
+        timestamp: Date.parse("2026-01-01T12:00:00Z")
       })
     ];
 
@@ -173,17 +174,17 @@ describe("analyzeParticipants", () => {
       createMessage({
         id: "late",
         senderId: "user-1",
-        timestamp: Date.parse("2026-01-01T23:00:00")
+        timestamp: Date.parse("2026-01-01T23:00:00Z")
       }),
       createMessage({
         id: "early",
         senderId: "user-1",
-        timestamp: Date.parse("2026-01-02T03:00:00")
+        timestamp: Date.parse("2026-01-02T03:00:00Z")
       }),
       createMessage({
         id: "day",
         senderId: "user-1",
-        timestamp: Date.parse("2026-01-02T12:00:00")
+        timestamp: Date.parse("2026-01-02T12:00:00Z")
       })
     ];
 
@@ -290,5 +291,17 @@ describe("analyzeParticipants", () => {
     expect(result).toHaveLength(1);
     expect(result[0].participantId).toBe("user-1");
     expect(result[0].messageCount).toBe(1);
+  });
+
+  it("counts night messages in the configured timezone", () => {
+    const messages = [
+      createMessage({ senderId: "user-1", timestamp: Date.parse("2026-01-01T22:30:00Z") })
+    ];
+
+    const utc = analyzeParticipants(messages, defaultOptions);
+    const kyiv = analyzeParticipants(messages, { ...defaultOptions, timezone: "Europe/Kyiv" });
+
+    expect(utc[0].nightMessages).toBe(0);
+    expect(kyiv[0].nightMessages).toBe(1);
   });
 });

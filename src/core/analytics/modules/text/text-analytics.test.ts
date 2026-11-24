@@ -113,18 +113,20 @@ describe("analyzeText", () => {
     });
   });
 
-  it("generates phrases with different n-gram sizes", () => {
-    const messages = [createMessage("one two three four")];
+  it("keeps phrases with different n-gram sizes when they meet the minimum count", () => {
+    const messages = [
+      createMessage("one two three"),
+      createMessage("one two three"),
+      createMessage("one two"),
+      createMessage("two three")
+    ];
 
     const result = analyze(messages);
 
     expect(result.mostFrequentPhrases).toEqual([
-      { phrase: "one two", count: 1 },
-      { phrase: "one two three", count: 1 },
-      { phrase: "one two three four", count: 1 },
-      { phrase: "three four", count: 1 },
-      { phrase: "two three", count: 1 },
-      { phrase: "two three four", count: 1 }
+      { phrase: "one two", count: 3 },
+      { phrase: "two three", count: 3 },
+      { phrase: "one two three", count: 2 }
     ]);
   });
 
@@ -249,13 +251,60 @@ describe("analyzeText", () => {
   });
 
   it("respects the top phrases limit", () => {
-    const messages = [createMessage("one two three four five")];
+    const messages = [
+      createMessage("one two three four five"),
+      createMessage("one two three four five")
+    ];
 
     const result = analyzeText(messages, {
       ...DEFAULT_ANALYSIS_OPTIONS,
-      topPhrasesLimit: 2
+      topPhrasesLimit: 1
     });
 
-    expect(result.mostFrequentPhrases).toHaveLength(2);
+    expect(result.mostFrequentPhrases).toHaveLength(1);
+  });
+
+  it("ignores phrases that appear only once", () => {
+    const messages = [createMessage("one two three")];
+
+    expect(analyze(messages).mostFrequentPhrases).toEqual([]);
+  });
+
+  it("keeps only the longest phrase when shorter ones never appear on their own", () => {
+    const messages = [createMessage("one two three four"), createMessage("one two three four")];
+
+    expect(analyze(messages).mostFrequentPhrases).toEqual([
+      { phrase: "one two three four", count: 2 }
+    ]);
+  });
+
+  it("keeps a shorter phrase that also appears on its own", () => {
+    const messages = [
+      createMessage("one two three"),
+      createMessage("one two three"),
+      createMessage("one two")
+    ];
+
+    expect(analyze(messages).mostFrequentPhrases).toEqual([
+      { phrase: "one two", count: 3 },
+      { phrase: "one two three", count: 2 }
+    ]);
+  });
+
+  it("counts a phrase once per message", () => {
+    const messages = [createMessage("ha ha ha ha"), createMessage("ha ha")];
+
+    expect(analyze(messages).mostFrequentPhrases).toEqual([{ phrase: "ha ha", count: 2 }]);
+  });
+
+  it("respects the minimum phrase count option", () => {
+    const messages = [createMessage("one two")];
+
+    const result = analyzeText(messages, {
+      ...DEFAULT_ANALYSIS_OPTIONS,
+      minimumPhraseCount: 1
+    });
+
+    expect(result.mostFrequentPhrases).toEqual([{ phrase: "one two", count: 1 }]);
   });
 });

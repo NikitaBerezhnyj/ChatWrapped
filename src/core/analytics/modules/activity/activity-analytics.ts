@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import type { NormalizedMessage } from "../../../normalization";
 import type { ActivityStats, AnalysisOptions } from "../../types";
+import { getZonedDate } from "../../time";
 
 interface CountEntry {
   key: string;
@@ -26,10 +26,6 @@ function sortCountEntries(map: Map<string, number>): CountEntry[] {
 
 function getMostActive(entries: CountEntry[]): CountEntry | null {
   return entries[0] ?? null;
-}
-
-function getZonedDate(timestamp: number, timezone: string): Date {
-  return toZonedTime(new Date(timestamp), timezone);
 }
 
 function getLongestActiveStreak(messages: NormalizedMessage[], timezone: string): number {

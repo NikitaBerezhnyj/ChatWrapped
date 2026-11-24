@@ -1,11 +1,18 @@
+import { format } from "date-fns";
 import type { NormalizedMessage } from "../../../normalization";
-import type { OverviewStats } from "../../types";
+import type { AnalysisOptions, OverviewStats } from "../../types";
+import { getZonedDate } from "../../time";
 
-function getActiveDays(messages: NormalizedMessage[]): Set<string> {
-  return new Set(messages.map(message => new Date(message.timestamp).toISOString().slice(0, 10)));
+function getActiveDays(messages: NormalizedMessage[], timezone: string): Set<string> {
+  return new Set(
+    messages.map(message => format(getZonedDate(message.timestamp, timezone), "yyyy-MM-dd"))
+  );
 }
 
-export function analyzeOverview(messages: NormalizedMessage[]): OverviewStats {
+export function analyzeOverview(
+  messages: NormalizedMessage[],
+  options: Pick<AnalysisOptions, "timezone">
+): OverviewStats {
   if (messages.length === 0) {
     return {
       totalMessages: 0,
@@ -28,7 +35,7 @@ export function analyzeOverview(messages: NormalizedMessage[]): OverviewStats {
 
   const totalCharacters = messages.reduce((total, message) => total + message.characterCount, 0);
 
-  const activeDays = getActiveDays(messages).size;
+  const activeDays = getActiveDays(messages, options.timezone).size;
 
   const { first, last } = messages.reduce(
     (range, message) => ({

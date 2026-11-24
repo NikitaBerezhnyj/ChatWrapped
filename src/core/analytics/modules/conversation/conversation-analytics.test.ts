@@ -25,6 +25,7 @@ const defaultOptions: AnalysisOptions = {
   nightEndHour: 6,
   topWordsLimit: 10,
   topPhrasesLimit: 10,
+  minimumPhraseCount: 2,
   topEmojisLimit: 10,
   minimumWordLength: 2,
   timezone: "Europe/Kyiv"

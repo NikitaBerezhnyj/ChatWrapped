@@ -88,7 +88,6 @@ describe("analyzeActivity", () => {
   });
 
   it("counts messages by weekday", () => {
-    // 2025-01-06 is Monday, 2025-01-07 is Tuesday.
     const messages = [
       createMessage(Date.UTC(2025, 0, 6, 10)),
       createMessage(Date.UTC(2025, 0, 6, 12)),

@@ -1,4 +1,5 @@
 import type { NormalizedMessage } from "../../../normalization";
+import { getZonedDate } from "../../time";
 import type { ParticipantStats } from "../../types";
 
 interface ParticipantAccumulator {
@@ -35,6 +36,7 @@ export function analyzeParticipants(
     conversationGapThresholdMs: number;
     nightStartHour: number;
     nightEndHour: number;
+    timezone: string;
   }
 ): ParticipantStats[] {
   if (messages.length === 0) {
@@ -55,7 +57,7 @@ export function analyzeParticipants(
     accumulator.characterCount += message.characterCount;
     accumulator.emojiCount += message.emojis.length;
 
-    const hour = new Date(message.timestamp).getHours();
+    const hour = getZonedDate(message.timestamp, options.timezone).getHours();
 
     if (isNightHour(hour, options.nightStartHour, options.nightEndHour)) {
       accumulator.nightMessages += 1;

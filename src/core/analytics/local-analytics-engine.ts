@@ -21,7 +21,7 @@ export class LocalAnalyticsEngine implements AnalyticsEngine {
     const messages = chat.messages.map(normalizeMessage);
 
     return {
-      overview: analyzeOverview(messages),
+      overview: analyzeOverview(messages, resolvedOptions),
       activity: analyzeActivity(messages, resolvedOptions),
       text: analyzeText(messages, resolvedOptions),
       participants: analyzeParticipants(messages, resolvedOptions),
