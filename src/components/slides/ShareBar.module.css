@@ -1,0 +1,14 @@
+.track {
+    width: 100%;
+    height: calc(var(--u) * 1.4);
+    overflow: hidden;
+    background: var(--story-decoration-fill);
+    border-radius: var(--radius-full);
+}
+
+.fill {
+    display: block;
+    height: 100%;
+    background: var(--tone-accent);
+    border-radius: inherit;
+}

@@ -101,7 +101,7 @@ export function SlideRenderer({
       return <ConversationsMonologueSlide slide={slide} formatters={formatters} />;
 
     case "achievement":
-      return <AchievementSlide slide={slide} formatters={formatters} />;
+      return <AchievementSlide slide={slide} />;
 
     case "achievements_recap":
       return <AchievementsRecapSlide slide={slide} />;
