@@ -1,110 +1,62 @@
-import layout from "../SlideLayout.module.css";
-import styles from "./ActivityMonthlySlide.module.css";
 import type {
-  PreparedPresentation,
-  ActivityMonthlySlide as ActivityMonthlySlideData
+  ActivityMonthlySlide as ActivityMonthlySlideData,
+  PreparedPresentation
 } from "../../../core/presentation";
+import { Bars, type BarItem } from "../Bars";
+import { StatSlide } from "../StatSlide";
 
 interface Props {
   slide: ActivityMonthlySlideData;
   formatters: PreparedPresentation["formatters"];
 }
 
-function formatMonth(month: string): {
-  label: string;
-  year: string;
-} {
-  const date = new Date(`${month}-01T12:00:00`);
-
-  if (Number.isNaN(date.getTime())) {
-    return { label: month, year: "" };
-  }
-
-  return {
-    label: new Intl.DateTimeFormat("en-US", {
-      month: "short"
-    }).format(date),
-    year: new Intl.DateTimeFormat("en-US", {
-      year: "numeric"
-    }).format(date)
-  };
-}
+const MAX_MONTHS_WITH_NAMES = 12;
 
 export function ActivityMonthlySlide({ slide, formatters }: Props) {
   const months = slide.byMonth;
-  const maxCount = Math.max(...months.map(item => item.count), 1);
+  const peak = months.reduce((best, item) => (item.count > best.count ? item : best));
+  const showMonthNames = months.length <= MAX_MONTHS_WITH_NAMES;
 
-  const peakMonth = months.reduce(
-    (peak, item) => (item.count > peak.count ? item : peak),
-    months[0]
-  );
+  const bars: BarItem[] = months.map((item, index) => {
+    const year = item.month.slice(0, 4);
+    const isJanuary = item.month.endsWith("-01");
 
-  const hasActivity = months.some(item => item.count > 0);
+    if (showMonthNames) {
+      return {
+        key: item.month,
+        value: item.count,
+        label: formatters.formatMonth(item.month, "short"),
+        sublabel: index === 0 || isJanuary ? year : undefined
+      };
+    }
+
+    return {
+      key: item.month,
+      value: item.count,
+      label: isJanuary ? year : undefined
+    };
+  });
 
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>A YEAR IN CONVERSATION</span>
-
-      <h2 className={layout.displayTitle}>
-        The months
-        <br />
-        that brought
-        <br />
-        you closer.
-      </h2>
-
-      {hasActivity ? (
-        <>
-          <div className={styles.peakSummary}>
-            <span className={styles.summaryLabel}>YOUR MOST ACTIVE MONTH</span>
-            <strong>
-              {formatMonth(peakMonth.month).label} {formatMonth(peakMonth.month).year}
-            </strong>
-            <span className={styles.summaryCount}>
-              {formatters.formatNumber(peakMonth.count)} messages
-            </span>
-          </div>
-
-          <div
-            className={styles.chart}
-            role="img"
-            aria-label={`Monthly message activity. Most active month: ${formatMonth(peakMonth.month).label} ${formatMonth(peakMonth.month).year}, with ${formatters.formatNumber(peakMonth.count)} messages.`}
-          >
-            {months.map(item => {
-              const month = formatMonth(item.month);
-              const isPeak = item.month === peakMonth.month;
-
-              return (
-                <div className={styles.monthColumn} key={item.month}>
-                  <div className={styles.barTrack}>
-                    <span
-                      className={`${styles.bar} ${isPeak ? styles.peakBar : ""}`}
-                      style={{
-                        height: `${(item.count / maxCount) * 100}%`
-                      }}
-                    />
-                  </div>
-
-                  <span className={styles.monthLabel}>{month.label}</span>
-                  <span className={styles.yearLabel}>{month.year}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className={styles.chartCaption}>
-            <span>MESSAGE ACTIVITY</span>
-            <span>{months.length} MONTHS</span>
-          </div>
-        </>
-      ) : (
-        <div className={styles.emptyState}>
-          <strong>No monthly history yet.</strong>
-          <span>There is not enough activity to build a timeline.</span>
-        </div>
-      )}
-
-      <span className={layout.slideFootnote}>EVERY MONTH ADDED ANOTHER CHAPTER</span>
-    </section>
+    <StatSlide
+      tone="activity"
+      kicker="A YEAR IN CONVERSATION"
+      title={["The months", "that brought", "you closer."]}
+      hero={{
+        value: formatters.formatMonth(peak.month),
+        label: `MOST ACTIVE MONTH · ${formatters.formatNumber(peak.count)} MESSAGES`,
+        size: "md"
+      }}
+      footnote="EVERY MONTH ADDED ANOTHER CHAPTER"
+    >
+      <Bars
+        title="MESSAGE ACTIVITY"
+        note={`${months.length} MONTHS`}
+        size="md"
+        highlightKey={peak.month}
+        ariaLabel={`Monthly message activity. Most active month: ${formatters.formatMonth(peak.month)}, with ${formatters.formatNumber(peak.count)} messages.`}
+        bars={bars}
+      />
+    </StatSlide>
   );
 }
