@@ -1,6 +1,7 @@
-import type { PreparedPresentation, FinaleSlide as FinaleSlideData } from "../../core/presentation";
-import layout from "./SlideLayout.module.css";
+import { RotateCcw } from "lucide-react";
+import type { FinaleSlide as FinaleSlideData, PreparedPresentation } from "../../core/presentation";
 import styles from "./FinaleSlide.module.css";
+import layout from "./SlideLayout.module.css";
 
 interface Props {
   slide: FinaleSlideData;
@@ -44,7 +45,7 @@ export function FinaleSlide({ slide, formatters, onReplay }: Props) {
 
       <div className={styles.finaleActions}>
         <button className={styles.finaleReplayButton} type="button" onClick={onReplay}>
-          ↻ REPLAY STORY
+          REPLAY STORY <RotateCcw width={20} />
         </button>
       </div>
 
