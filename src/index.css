@@ -1,3 +1,81 @@
-@import "./styles/tokens.css";
-@import "./styles/globals.css";
-@import "./themes/stories/default/theme.css";
+@import "./themes/default.css";
+@import "./themes/neon-night.css";
+
+:root {
+    --font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+
+    --color-background: #111113;
+    --color-surface: #1c1c20;
+    --color-text: #f8f7f4;
+    --color-muted: #a4a3aa;
+    --color-subtle: #77777e;
+    --color-accent: #d4ff43;
+    --color-accent-hover: #e2ff7d;
+    --color-error: #ff6c78;
+    --color-border: rgb(255 255 255 / 12%);
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-full: 999px;
+
+    --transition-fast: 140ms ease;
+    --transition-normal: 200ms ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 320px;
+    min-height: 100%;
+    font-family: var(--font-family);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    color: var(--color-text);
+    background: var(--color-background);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+}
+
+#root {
+    min-height: 100vh;
+}
+
+::selection {
+    color: var(--color-background);
+    background: var(--color-accent);
+}

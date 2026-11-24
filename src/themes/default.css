@@ -45,7 +45,9 @@
     --slide-participants-background: #43245e;
     --slide-text-background: #762b4d;
     --slide-conversations-background: #175348;
+    --slide-conversations-accent: #a7ffe1;
     --slide-achievements-background: #5b4519;
+    --slide-achievements-accent: #ffe28a;
 
     /* Finale */
     --slide-finale-background: #211537;
