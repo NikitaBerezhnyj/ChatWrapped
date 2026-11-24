@@ -1,13 +1,13 @@
 import type { PresentationSlideType } from "../types";
-import {
-  DEFAULT_PRESENTATION_FORMATTING_OPTIONS,
-  type PresentationFormattingOptions
-} from "./presentation-formatting-options";
 import type {
   PresentationFormatterFactory,
   PresentationFormatters,
   SlideCopy
 } from "./presentation-formatters";
+import {
+  DEFAULT_PRESENTATION_FORMATTING_OPTIONS,
+  type PresentationFormattingOptions
+} from "./presentation-formatting-options";
 
 const SLIDE_COPY: Record<PresentationSlideType, SlideCopy> = {
   cover: {
@@ -53,6 +53,12 @@ const DURATION_UNITS = [
   { unit: "second", milliseconds: 1_000 }
 ] as const;
 
+function parseCalendarDate(value: string): Date | null {
+  const date = new Date(`${value}T12:00:00Z`);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export class LocalPresentationFormatterFactory implements PresentationFormatterFactory {
   create(options: Partial<PresentationFormattingOptions> = {}): PresentationFormatters {
     const resolvedOptions = {
@@ -90,6 +96,22 @@ export class LocalPresentationFormatterFactory implements PresentationFormatterF
       dateStyle: "medium",
       timeStyle: "short",
       timeZone: timezone
+    });
+
+    const dayFormatter = new Intl.DateTimeFormat(locale, {
+      dateStyle: "long",
+      timeZone: "UTC"
+    });
+
+    const longMonthFormatter = new Intl.DateTimeFormat(locale, {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC"
+    });
+
+    const shortMonthFormatter = new Intl.DateTimeFormat(locale, {
+      month: "short",
+      timeZone: "UTC"
     });
 
     const durationFormatters = DURATION_UNITS.map(
@@ -169,13 +191,29 @@ export class LocalPresentationFormatterFactory implements PresentationFormatterF
         }).format(date);
       },
 
-      formatWeekday(weekday) {
+      formatWeekday(weekday, style = "long") {
         const date = new Date(Date.UTC(2024, 0, 7 + weekday));
 
         return new Intl.DateTimeFormat(locale, {
-          weekday: "long",
+          weekday: style,
           timeZone: "UTC"
         }).format(date);
+      },
+
+      formatDay(value) {
+        const date = parseCalendarDate(value);
+
+        return date ? dayFormatter.format(date) : value;
+      },
+
+      formatMonth(value, style = "long") {
+        const date = parseCalendarDate(`${value}-01`);
+
+        if (!date) {
+          return value;
+        }
+
+        return (style === "long" ? longMonthFormatter : shortMonthFormatter).format(date);
       },
 
       getSlideCopy(type) {

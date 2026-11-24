@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { LocalPresentationFormatterFactory } from "./local-presentation-formatters";
 import type { PresentationSlideType } from "../types";
+import { LocalPresentationFormatterFactory } from "./local-presentation-formatters";
+import { DEFAULT_PRESENTATION_FORMATTING_OPTIONS } from "./presentation-formatting-options";
 
 describe("LocalPresentationFormatterFactory", () => {
   const factory = new LocalPresentationFormatterFactory();
@@ -171,6 +172,34 @@ describe("LocalPresentationFormatterFactory", () => {
     it("formats Saturday", () => {
       expect(formatters.formatWeekday(6)).toBe("Saturday");
     });
+
+    it("formats a short weekday", () => {
+      expect(formatters.formatWeekday(0, "short")).toBe("Sun");
+    });
+  });
+
+  describe("formatDay", () => {
+    it("formats a calendar day", () => {
+      expect(formatters.formatDay("2024-01-15")).toBe("January 15, 2024");
+    });
+
+    it("returns the input when the day is invalid", () => {
+      expect(formatters.formatDay("not-a-date")).toBe("not-a-date");
+    });
+  });
+
+  describe("formatMonth", () => {
+    it("formats a month with the year", () => {
+      expect(formatters.formatMonth("2024-03")).toBe("March 2024");
+    });
+
+    it("formats a short month name", () => {
+      expect(formatters.formatMonth("2024-03", "short")).toBe("Mar");
+    });
+
+    it("returns the input when the month is invalid", () => {
+      expect(formatters.formatMonth("oops")).toBe("oops");
+    });
   });
 
   describe("getSlideCopy", () => {
@@ -231,9 +260,14 @@ describe("LocalPresentationFormatterFactory", () => {
   describe("create", () => {
     it("uses the default timezone when no options are provided", () => {
       const defaultFormatters = factory.create();
+      const explicitFormatters = factory.create({
+        timezone: DEFAULT_PRESENTATION_FORMATTING_OPTIONS.timezone
+      });
       const timestamp = Date.UTC(2024, 0, 1, 23, 30);
 
-      expect(defaultFormatters.formatDate(timestamp)).toBe("Jan 2, 2024");
+      expect(defaultFormatters.formatDate(timestamp)).toBe(
+        explicitFormatters.formatDate(timestamp)
+      );
     });
 
     it("supports a custom timezone", () => {

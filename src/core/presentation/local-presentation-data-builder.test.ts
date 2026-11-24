@@ -229,4 +229,23 @@ describe("LocalPresentationDataBuilder", () => {
 
     expect(kinds.indexOf("participants_balance")).toBeLessThan(kinds.indexOf("text_words"));
   });
+
+  it("orders participants by message count", async () => {
+    const chat = createChat({
+      participants: [
+        { id: "user-2", name: "Bob" },
+        { id: "user-1", name: "Alice" }
+      ]
+    });
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const balance = result.slides.find(slide => slide.kind === "participants_balance");
+
+    if (balance?.kind !== "participants_balance") {
+      throw new Error("Participants balance slide was not generated");
+    }
+
+    expect(balance.participants.map(participant => participant.id)).toEqual(["user-1", "user-2"]);
+  });
 });

@@ -19,7 +19,11 @@ export interface PresentationFormatters {
   formatDateRange(start: number | null, end: number | null): string;
 
   formatHour(hour: number): string;
-  formatWeekday(weekday: number): string;
+  formatWeekday(weekday: number, style?: "long" | "short"): string;
+
+  formatDay(date: string): string;
+
+  formatMonth(month: string, style?: "long" | "short"): string;
 
   getSlideCopy(type: PresentationSlideType): SlideCopy;
 }

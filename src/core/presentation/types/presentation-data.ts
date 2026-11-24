@@ -88,10 +88,10 @@ export interface OverviewPaceSlide extends PresentationSlideBase {
 export interface ActivityPeakSlide extends PresentationSlideBase {
   type: "activity";
   kind: "activity_peak";
-  mostActiveDay: { date: string; count: number } | null;
-  mostActiveMonth: { month: string; count: number } | null;
-  mostActiveHour: { hour: number; count: number } | null;
-  mostActiveWeekday: { weekday: number; count: number } | null;
+  mostActiveDay: { date: string; count: number };
+  mostActiveMonth: { month: string; count: number };
+  mostActiveHour: { hour: number; count: number };
+  mostActiveWeekday: { weekday: number; count: number };
 }
 
 export interface ActivityRhythmSlide extends PresentationSlideBase {

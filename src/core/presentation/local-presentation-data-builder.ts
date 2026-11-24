@@ -5,6 +5,7 @@ import type { ParticipantStatistics, PresentationData, PresentationSlide } from 
 
 const MIN_EMOJI_OCCURRENCES = 3;
 const MIN_MONTHS_FOR_MONTHLY_HISTORY = 3;
+const MAX_PHRASES_ON_SLIDE = 5;
 
 type ChatPeriod = {
   start: number | null;
@@ -101,22 +102,17 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
     const { overview, activity } = analysis.analytics;
     const slides: PresentationSlide[] = [];
 
-    const hasActivityPeak = Boolean(
-      activity.mostActiveDay ||
-      activity.mostActiveMonth ||
-      activity.mostActiveHour ||
-      activity.mostActiveWeekday
-    );
+    const { mostActiveDay, mostActiveMonth, mostActiveHour, mostActiveWeekday } = activity;
 
-    if (hasActivityPeak) {
+    if (mostActiveDay && mostActiveMonth && mostActiveHour && mostActiveWeekday) {
       slides.push({
         id: "activity-peak",
         type: "activity",
         kind: "activity_peak",
-        mostActiveDay: activity.mostActiveDay ? { ...activity.mostActiveDay } : null,
-        mostActiveMonth: activity.mostActiveMonth ? { ...activity.mostActiveMonth } : null,
-        mostActiveHour: activity.mostActiveHour ? { ...activity.mostActiveHour } : null,
-        mostActiveWeekday: activity.mostActiveWeekday ? { ...activity.mostActiveWeekday } : null
+        mostActiveDay: { ...mostActiveDay },
+        mostActiveMonth: { ...mostActiveMonth },
+        mostActiveHour: { ...mostActiveHour },
+        mostActiveWeekday: { ...mostActiveWeekday }
       });
     }
 
@@ -201,7 +197,7 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
         id: "text-phrases",
         type: "text",
         kind: "text_phrases",
-        phrases: text.mostFrequentPhrases.map(item => ({ ...item }))
+        phrases: text.mostFrequentPhrases.slice(0, MAX_PHRASES_ON_SLIDE).map(item => ({ ...item }))
       });
     }
 
@@ -340,22 +336,24 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
   ): ParticipantStatistics[] {
     const statsById = new Map(participantStats.map(stat => [stat.participantId, stat]));
 
-    return chat.participants.map(participant => {
-      const stats = statsById.get(participant.id);
+    return chat.participants
+      .map(participant => {
+        const stats = statsById.get(participant.id);
 
-      return {
-        id: participant.id,
-        name: participant.name,
-        messageCount: stats?.messageCount ?? 0,
-        messageShare: stats?.messageShare ?? 0,
-        wordCount: stats?.wordCount ?? 0,
-        wordShare: stats?.wordShare ?? 0,
-        characterCount: stats?.characterCount ?? 0,
-        averageMessageLength: stats?.averageMessageLength ?? 0,
-        nightMessages: stats?.nightMessages ?? 0,
-        emojiCount: stats?.emojiCount ?? 0,
-        startedConversations: stats?.startedConversations ?? 0
-      };
-    });
+        return {
+          id: participant.id,
+          name: participant.name,
+          messageCount: stats?.messageCount ?? 0,
+          messageShare: stats?.messageShare ?? 0,
+          wordCount: stats?.wordCount ?? 0,
+          wordShare: stats?.wordShare ?? 0,
+          characterCount: stats?.characterCount ?? 0,
+          averageMessageLength: stats?.averageMessageLength ?? 0,
+          nightMessages: stats?.nightMessages ?? 0,
+          emojiCount: stats?.emojiCount ?? 0,
+          startedConversations: stats?.startedConversations ?? 0
+        };
+      })
+      .sort((a, b) => b.messageCount - a.messageCount);
   }
 }

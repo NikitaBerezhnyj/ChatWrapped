@@ -3,5 +3,5 @@ export interface PresentationFormattingOptions {
 }
 
 export const DEFAULT_PRESENTATION_FORMATTING_OPTIONS: PresentationFormattingOptions = {
-  timezone: "Europe/Kyiv"
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
 };
