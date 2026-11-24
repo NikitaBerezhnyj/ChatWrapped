@@ -1,104 +1,47 @@
-.slide {
-    composes: slide from "../SlideLayout.module.css";
-
-    --slide-background: var(--slide-text-background);
-    --slide-muted: var(--story-muted);
-
-    justify-content: center;
-    background: var(--slide-text-background);
-}
-
-.phraseList {
-    position: relative;
-    z-index: 2;
+.list {
     display: flex;
-    max-height: 330px;
     flex-direction: column;
-    overflow-y: auto;
-    margin-top: 30px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--story-decoration-border) transparent;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .phrase {
     display: flex;
-    flex-direction: column;
-    gap: 13px;
-    padding: 15px 0;
-}
-
-.phraseContent {
-    display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: calc(var(--u) * 3);
+    padding: calc(var(--u) * 3) 0;
+    border-top: 1px solid var(--story-decoration-border);
 }
 
-.phraseText {
+.phrase:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.text {
     min-width: 0;
     color: var(--story-text);
-    font-size: clamp(16px, 4.5vw, 23px);
+    font-size: calc(var(--u) * 5.2);
     font-weight: 850;
     letter-spacing: -0.045em;
     line-height: 1.15;
     overflow-wrap: anywhere;
 }
 
-.leadingPhrase .phraseText {
-    color: var(--story-accent);
-    font-size: clamp(21px, 5.5vw, 30px);
+.phrase:first-child .text {
+    color: var(--tone-accent);
+    font-size: calc(var(--u) * 7);
     font-weight: 950;
     letter-spacing: -0.06em;
 }
 
-.phraseCount {
-    flex: 0 0 auto;
-    padding-top: 3px;
+.count {
+    flex: none;
+    padding-top: calc(var(--u) * 0.8);
     color: var(--story-muted);
-    font-size: 10px;
+    font-size: var(--fs-label);
     font-weight: 850;
     font-variant-numeric: tabular-nums;
-}
-
-.separator {
-    display: block;
-    width: 100%;
-    height: 1px;
-    background: var(--story-decoration-border);
-}
-
-.emptyState {
-    position: relative;
-    z-index: 2;
-    max-width: 260px;
-    margin-top: 36px;
-    color: var(--story-muted);
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-@media (max-width: 360px) {
-    .phraseList {
-        margin-top: 22px;
-    }
-
-    .phrase {
-        gap: 10px;
-        padding: 12px 0;
-    }
-
-    .phraseContent {
-        gap: 8px;
-    }
-}
-
-@media (max-height: 700px) and (min-width: 601px) {
-    .phraseList {
-        max-height: 250px;
-        margin-top: 20px;
-    }
-
-    .phrase {
-        padding: 11px 0;
-    }
 }

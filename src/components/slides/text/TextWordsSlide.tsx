@@ -1,8 +1,9 @@
 import type {
-  TextWordsSlide as TextWordsSlideData,
-  PreparedPresentation
+  PreparedPresentation,
+  TextWordsSlide as TextWordsSlideData
 } from "../../../core/presentation";
-import layout from "../SlideLayout.module.css";
+import { SlideFrame } from "../SlideFrame";
+import { Title } from "../Title";
 import styles from "./TextWordsSlide.module.css";
 
 interface Props {
@@ -10,67 +11,41 @@ interface Props {
   formatters: PreparedPresentation["formatters"];
 }
 
-export function TextWordsSlide({ slide, formatters }: Props) {
-  const words = [...slide.words]
-    .filter(word => word.count > 0)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 12);
+const MIN_SIZE = 3.6;
+const SIZE_RANGE = 6.4;
 
+export function TextWordsSlide({ slide, formatters }: Props) {
+  const { words } = slide;
   const maxCount = Math.max(...words.map(word => word.count), 1);
 
-  if (words.length === 0) {
-    return (
-      <section className={styles.slide}>
-        <span className={layout.kicker}>THE LANGUAGE OF YOUR CHAT</span>
-
-        <h2 className={layout.displayTitle}>
-          Every chat
-          <br />
-          has its own
-          <br />
-          vocabulary.
-        </h2>
-
-        <p className={styles.emptyState}>Not enough word data to reveal your most used words.</p>
-
-        <span className={layout.slideFootnote}>THE WORDS THAT SHAPED YOUR STORY</span>
-      </section>
-    );
-  }
-
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>THE LANGUAGE OF YOUR CHAT</span>
+    <SlideFrame
+      tone="text"
+      kicker="THE LANGUAGE OF YOUR CHAT"
+      footnote={`YOUR ${words.length} MOST USED WORDS`}
+    >
+      <Title lines={["These words", "kept coming", "back."]} />
 
-      <h2 className={layout.displayTitle}>
-        These words
-        <br />
-        kept coming
-        <br />
-        back.
-      </h2>
-
-      <div className={styles.wordCloud}>
+      <ul className={styles.cloud}>
         {words.map((word, index) => {
-          const relativeFrequency = word.count / maxCount;
+          const weight = word.count / maxCount;
 
           return (
-            <div
-              className={`${styles.word} ${index === 0 ? styles.leadingWord : ""}`}
+            <li
+              className={styles.word}
               key={word.word}
+              data-leading={index === 0 || undefined}
               style={{
-                fontSize: `${Math.round(15 + relativeFrequency * 27)}px`,
-                opacity: 0.55 + relativeFrequency * 0.45
+                fontSize: `calc(var(--u) * ${MIN_SIZE + weight * SIZE_RANGE})`,
+                opacity: 0.55 + weight * 0.45
               }}
             >
-              <span className={styles.wordText}>{word.word}</span>
-              <span className={styles.wordCount}>{formatters.formatCompactNumber(word.count)}</span>
-            </div>
+              <span>{word.word}</span>
+              <span className={styles.count}>{formatters.formatCompactNumber(word.count)}</span>
+            </li>
           );
         })}
-      </div>
-
-      <span className={layout.slideFootnote}>YOUR {words.length} MOST USED WORDS</span>
-    </section>
+      </ul>
+    </SlideFrame>
   );
 }

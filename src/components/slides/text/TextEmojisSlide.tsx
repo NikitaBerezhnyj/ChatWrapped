@@ -1,8 +1,9 @@
 import type {
-  TextEmojisSlide as TextEmojisSlideData,
-  PreparedPresentation
+  PreparedPresentation,
+  TextEmojisSlide as TextEmojisSlideData
 } from "../../../core/presentation";
-import layout from "../SlideLayout.module.css";
+import { SlideFrame } from "../SlideFrame";
+import { Title } from "../Title";
 import styles from "./TextEmojisSlide.module.css";
 
 interface Props {
@@ -11,67 +12,31 @@ interface Props {
 }
 
 export function TextEmojisSlide({ slide, formatters }: Props) {
-  const emojis = [...slide.emojis]
-    .filter(emoji => emoji.count > 0)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
-
-  if (emojis.length === 0) {
-    return (
-      <section className={styles.slide}>
-        <span className={layout.kicker}>A LANGUAGE OF THEIR OWN</span>
-
-        <h2 className={layout.displayTitle}>
-          Not every
-          <br />
-          feeling needs
-          <br />a word.
-        </h2>
-
-        <p className={styles.emptyState}>No recurring emojis found in this conversation.</p>
-
-        <span className={layout.slideFootnote}>SOME THINGS ARE BETTER LEFT UNSAID</span>
-      </section>
-    );
-  }
-
-  const [leadingEmoji, ...otherEmojis] = emojis;
+  const [leading, ...others] = slide.emojis;
 
   return (
-    <section className={styles.slide}>
-      <span className={layout.kicker}>A LANGUAGE OF THEIR OWN</span>
+    <SlideFrame tone="text" kicker="A LANGUAGE OF THEIR OWN" footnote="YOUR MOST USED EMOJIS">
+      <Title lines={["More than", "words could", "ever say."]} />
 
-      <h2 className={layout.displayTitle}>
-        More than
-        <br />
-        words could
-        <br />
-        ever say.
-      </h2>
+      <div className={styles.leading}>
+        <span className={styles.emoji}>{leading.emoji}</span>
 
-      <div className={styles.leadingEmoji}>
-        <span className={styles.emoji}>{leadingEmoji.emoji}</span>
-
-        <div className={styles.leadingInfo}>
-          <strong>{formatters.formatNumber(leadingEmoji.count)}</strong>
+        <div className={styles.info}>
+          <strong>{formatters.formatNumber(leading.count)}</strong>
           <span>USES OF YOUR TOP EMOJI</span>
         </div>
       </div>
 
-      {otherEmojis.length > 0 && (
-        <div className={styles.emojiGrid}>
-          {otherEmojis.map(item => (
-            <div className={styles.emojiItem} key={item.emoji}>
+      {others.length > 0 && (
+        <ul className={styles.grid}>
+          {others.map(item => (
+            <li className={styles.item} key={item.emoji}>
               <span className={styles.gridEmoji}>{item.emoji}</span>
-              <span className={styles.emojiCount}>
-                {formatters.formatCompactNumber(item.count)}
-              </span>
-            </div>
+              <span className={styles.gridCount}>{formatters.formatCompactNumber(item.count)}</span>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-
-      <span className={layout.slideFootnote}>YOUR MOST USED EMOJIS</span>
-    </section>
+    </SlideFrame>
   );
 }
