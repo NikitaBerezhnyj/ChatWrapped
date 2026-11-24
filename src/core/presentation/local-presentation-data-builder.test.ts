@@ -250,23 +250,30 @@ describe("LocalPresentationDataBuilder", () => {
   });
 
   it("gives chat-wide achievements no holders", async () => {
-    const chat = createChat();
+    const fourYears = 4 * 365 * 24 * 60 * 60 * 1_000;
+
+    const chat = createChat({
+      messages: [
+        { id: "1", senderId: "user-1", timestamp: 0, type: "text", text: "Hello" },
+        { id: "2", senderId: "user-2", timestamp: fourYears, type: "text", text: "Hi" }
+      ]
+    });
     const analysis = await pipeline.analyze(chat);
 
     const result = builder.build(chat, analysis);
     const slide = result.slides.find(
-      item => item.kind === "achievement" && item.achievement.id === "speed_demon"
+      item => item.kind === "achievement" && item.achievement.id === "long_distance"
     );
 
     if (slide?.kind !== "achievement") {
-      throw new Error("Speed Demon slide was not generated");
+      throw new Error("Long Distance slide was not generated");
     }
 
     expect(slide.holders).toEqual([]);
   });
 
   it("lists who earned a participant achievement", async () => {
-    const messages = Array.from({ length: 1_000 }, (_, index) => ({
+    const aliceMessages = Array.from({ length: 1_000 }, (_, index) => ({
       id: String(index),
       senderId: "user-1",
       timestamp: 1_000 + index * 1_000,
@@ -274,7 +281,15 @@ describe("LocalPresentationDataBuilder", () => {
       text: "Hello"
     }));
 
-    const chat = createChat({ messages });
+    const bobMessage = {
+      id: "bob",
+      senderId: "user-2",
+      timestamp: 2_000_000,
+      type: "text" as const,
+      text: "Hi"
+    };
+
+    const chat = createChat({ messages: [...aliceMessages, bobMessage] });
     const analysis = await pipeline.analyze(chat);
 
     const result = builder.build(chat, analysis);
@@ -287,5 +302,41 @@ describe("LocalPresentationDataBuilder", () => {
     }
 
     expect(slide.holders).toEqual([{ id: "user-1", name: "Alice" }]);
+  });
+
+  it("fills months without messages in the monthly history", async () => {
+    const chat = createChat({
+      messages: [
+        {
+          id: "1",
+          senderId: "user-1",
+          timestamp: Date.UTC(2025, 0, 15, 12),
+          type: "text",
+          text: "Hello"
+        },
+        {
+          id: "2",
+          senderId: "user-2",
+          timestamp: Date.UTC(2025, 3, 15, 12),
+          type: "text",
+          text: "Hi"
+        }
+      ]
+    });
+    const analysis = await pipeline.analyze(chat);
+
+    const result = builder.build(chat, analysis);
+    const monthly = result.slides.find(slide => slide.kind === "activity_monthly");
+
+    if (monthly?.kind !== "activity_monthly") {
+      throw new Error("Monthly slide was not generated");
+    }
+
+    expect(monthly.byMonth).toEqual([
+      { month: "2025-01", count: 1 },
+      { month: "2025-02", count: 0 },
+      { month: "2025-03", count: 0 },
+      { month: "2025-04", count: 1 }
+    ]);
   });
 });

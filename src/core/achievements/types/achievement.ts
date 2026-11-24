@@ -27,7 +27,7 @@ export interface ChatAchievementDefinition extends AchievementDefinitionBase {
 
 export interface ParticipantAchievementDefinition extends AchievementDefinitionBase {
   scope: "participant";
-  condition: (participant: ParticipantStats) => boolean;
+  condition: (participant: ParticipantStats, participants: ParticipantStats[]) => boolean;
 }
 
 export type AchievementDefinition = ChatAchievementDefinition | ParticipantAchievementDefinition;

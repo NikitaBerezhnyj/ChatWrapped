@@ -66,6 +66,16 @@ function createAnalytics(overrides: Partial<AnalyticsResult> = {}): AnalyticsRes
   };
 }
 
+function evaluateChatterbox(engine: LocalAchievementsEngine, participants: ParticipantStats[]) {
+  return createEngineResult(engine, participants).find(
+    achievement => achievement.id === "chatterbox"
+  );
+}
+
+function createEngineResult(engine: LocalAchievementsEngine, participants: ParticipantStats[]) {
+  return engine.evaluate(createAnalytics({ participants }));
+}
+
 describe("LocalAchievementsEngine", () => {
   const engine = new LocalAchievementsEngine();
 
@@ -82,7 +92,7 @@ describe("LocalAchievementsEngine", () => {
       id: "marathon",
       category: "general",
       title: "Marathon",
-      description: "Exchanged 1,000 or more messages.",
+      description: "Exchanged 50,000 or more messages.",
       icon: "trophy",
       unlocked: false,
       holderIds: []
@@ -93,7 +103,7 @@ describe("LocalAchievementsEngine", () => {
     const analytics = createAnalytics({
       overview: {
         ...createAnalytics().overview,
-        totalMessages: 1_000
+        totalMessages: 50_000
       }
     });
 
@@ -125,37 +135,6 @@ describe("LocalAchievementsEngine", () => {
     const secondResult = engine.evaluate(analytics);
 
     expect(firstResult).not.toBe(secondResult);
-    expect(firstResult).not.toBe(secondResult);
-  });
-
-  it("lists every participant who earned a participant achievement", () => {
-    const analytics = createAnalytics({
-      participants: [
-        createParticipant({ participantId: "user-1", messageCount: 1_500 }),
-        createParticipant({ participantId: "user-2", messageCount: 1_000 }),
-        createParticipant({ participantId: "user-3", messageCount: 10 })
-      ]
-    });
-
-    const chatterbox = engine
-      .evaluate(analytics)
-      .find(achievement => achievement.id === "chatterbox");
-
-    expect(chatterbox?.unlocked).toBe(true);
-    expect(chatterbox?.holderIds).toEqual(["user-1", "user-2"]);
-  });
-
-  it("keeps a participant achievement locked when nobody earned it", () => {
-    const analytics = createAnalytics({
-      participants: [createParticipant({ messageCount: 10 })]
-    });
-
-    const chatterbox = engine
-      .evaluate(analytics)
-      .find(achievement => achievement.id === "chatterbox");
-
-    expect(chatterbox?.unlocked).toBe(false);
-    expect(chatterbox?.holderIds).toEqual([]);
   });
 
   it("counts night messages per participant", () => {
@@ -169,5 +148,42 @@ describe("LocalAchievementsEngine", () => {
     const nightOwl = engine.evaluate(analytics).find(achievement => achievement.id === "night_owl");
 
     expect(nightOwl?.unlocked).toBe(false);
+  });
+
+  it("awards a participant achievement to the one who leads by 50%", () => {
+    const chatterbox = evaluateChatterbox(engine, [
+      createParticipant({ participantId: "user-1", messageCount: 3_000 }),
+      createParticipant({ participantId: "user-2", messageCount: 1_000 })
+    ]);
+
+    expect(chatterbox?.unlocked).toBe(true);
+    expect(chatterbox?.holderIds).toEqual(["user-1"]);
+  });
+
+  it("does not award it when nobody leads by enough", () => {
+    const chatterbox = evaluateChatterbox(engine, [
+      createParticipant({ participantId: "user-1", messageCount: 1_200 }),
+      createParticipant({ participantId: "user-2", messageCount: 1_000 })
+    ]);
+
+    expect(chatterbox?.unlocked).toBe(false);
+    expect(chatterbox?.holderIds).toEqual([]);
+  });
+
+  it("does not award it in a chat with one participant", () => {
+    const chatterbox = evaluateChatterbox(engine, [
+      createParticipant({ participantId: "user-1", messageCount: 5_000 })
+    ]);
+
+    expect(chatterbox?.unlocked).toBe(false);
+  });
+
+  it("does not award it below the minimum volume", () => {
+    const chatterbox = evaluateChatterbox(engine, [
+      createParticipant({ participantId: "user-1", messageCount: 600 }),
+      createParticipant({ participantId: "user-2", messageCount: 100 })
+    ]);
+
+    expect(chatterbox?.unlocked).toBe(false);
   });
 });

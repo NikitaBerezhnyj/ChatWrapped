@@ -24,7 +24,7 @@ function evaluateDefinition(
   const { condition } = definition;
 
   const holderIds = analytics.participants
-    .filter(participant => condition(participant))
+    .filter(participant => condition(participant, analytics.participants))
     .map(participant => participant.participantId);
 
   return {

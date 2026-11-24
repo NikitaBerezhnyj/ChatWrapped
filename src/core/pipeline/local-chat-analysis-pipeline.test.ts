@@ -56,11 +56,22 @@ describe("LocalChatAnalysisPipeline", () => {
   });
 
   it("evaluates achievements using analytics results", async () => {
-    const result = await pipeline.analyze(createChat());
+    const fourYears = 4 * 365 * 24 * 60 * 60 * 1_000;
 
-    const speedDemon = result.achievements.find(achievement => achievement.id === "speed_demon");
+    const result = await pipeline.analyze(
+      createChat({
+        messages: [
+          { id: "1", senderId: "user-1", timestamp: 0, type: "text", text: "Hello" },
+          { id: "2", senderId: "user-2", timestamp: fourYears, type: "text", text: "Hi" }
+        ]
+      })
+    );
 
-    expect(speedDemon?.unlocked).toBe(true);
+    const longDistance = result.achievements.find(
+      achievement => achievement.id === "long_distance"
+    );
+
+    expect(longDistance?.unlocked).toBe(true);
   });
 
   it("passes analysis options to the analytics engine", async () => {
