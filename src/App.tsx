@@ -7,6 +7,16 @@ import StoryPage from "./pages/StoryPage";
 const parser = new TelegramParser();
 const presentationService = new LocalPresentationService();
 
+function parseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(
+      "This file isn't valid JSON. When exporting from Telegram Desktop, choose Machine-readable JSON, not HTML."
+    );
+  }
+}
+
 function App() {
   const [presentation, setPresentation] = useState<PreparedPresentation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,10 +27,14 @@ function App() {
     setError(null);
 
     try {
-      const fileContent = await file.text();
-      const exportData: unknown = JSON.parse(fileContent);
+      const exportData = parseJson(await file.text());
 
       const chat = parser.parse(exportData);
+
+      if (chat.messages.length === 0) {
+        throw new Error("This chat has no messages to analyze.");
+      }
+
       const preparedPresentation = await presentationService.prepare(chat);
 
       setPresentation(preparedPresentation);

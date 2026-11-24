@@ -17,6 +17,12 @@ export function validateTelegramExport(input: unknown): TelegramExport {
     throw new Error("Invalid Telegram export: expected an object.");
   }
 
+  if (isRecord(input.chats)) {
+    throw new Error(
+      "This is a full Telegram account export. Export a single chat instead: open it in Telegram Desktop, choose ⋮ → Export chat history, and select Machine-readable JSON."
+    );
+  }
+
   if (typeof input.type !== "string") {
     throw new Error("Invalid Telegram export: missing chat type.");
   }

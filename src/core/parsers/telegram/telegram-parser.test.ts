@@ -216,4 +216,8 @@ describe("TelegramParser", () => {
       })
     ).toThrow(/timestamp/);
   });
+
+  it("explains how to export a single chat when given a full account export", () => {
+    expect(() => parser.parse({ chats: { list: [] } })).toThrow(/single chat/i);
+  });
 });
