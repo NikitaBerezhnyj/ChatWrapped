@@ -1,0 +1,218 @@
+.viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: var(--space-6);
+    color: var(--story-text);
+    background: var(--story-backdrop);
+    font-family: var(--font-family);
+}
+
+.story {
+    position: relative;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    width: min(100%, 430px, calc((100dvh - 48px) * 9 / 16));
+    aspect-ratio: 9 / 16;
+    max-height: calc(100dvh - 48px);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--story-background);
+    border-radius: var(--radius-md);
+    box-shadow: 0 24px 80px rgb(0 0 0 / 45%);
+    container-type: size;
+    --u: min(1cqw, calc(1cqh * 9 / 16));
+}
+
+.progress {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    z-index: 20;
+    display: flex;
+    gap: 4px;
+}
+
+.progressTrack {
+    flex: 1;
+    height: 3px;
+    overflow: hidden;
+    background: var(--story-progress-track);
+    border-radius: var(--radius-full);
+}
+
+.progressFill {
+    width: 0;
+    height: 100%;
+    background: var(--story-progress-fill);
+    border-radius: inherit;
+    transition: width 50ms linear;
+}
+
+.header {
+    position: absolute;
+    top: 26px;
+    right: 16px;
+    left: 16px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.brand {
+    color: var(--story-brand);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    pointer-events: auto;
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-2);
+    pointer-events: auto;
+}
+
+.iconButton {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    padding: 0;
+    color: var(--story-text);
+    background: var(--story-overlay);
+    border: 1px solid var(--story-border);
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.iconButton:hover:not(:disabled) {
+    background: var(--story-overlay-hover);
+}
+
+.iconButton:active:not(:disabled) {
+    transform: scale(0.92);
+}
+
+.iconButton:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.slideViewport {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.footer {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    left: 16px;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    color: var(--story-footer);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    pointer-events: none;
+}
+
+.pausedIndicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 25;
+    padding: 10px 16px;
+    color: var(--story-text);
+    background: var(--story-overlay-strong);
+    border: 1px solid var(--story-border-subtle);
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.navigation {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    pointer-events: none;
+}
+
+.navigationZone {
+    width: 50%;
+    height: 100%;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.navigationZone:focus-visible {
+    outline: none;
+}
+
+@media (max-width: 600px) {
+    .viewer {
+        padding: 0;
+    }
+
+    .story {
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        aspect-ratio: auto;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .header {
+        top: 24px;
+        right: 14px;
+        left: 14px;
+    }
+
+    .progress {
+        top: 9px;
+        right: 9px;
+        left: 9px;
+    }
+
+    .footer {
+        right: 14px;
+        bottom: 12px;
+        left: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .story *,
+    .story *::before,
+    .story *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
