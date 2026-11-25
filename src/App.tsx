@@ -1,24 +1,13 @@
 import { useState } from "react";
 import { StoryErrorBoundary } from "./components/StoryErrorBoundary";
-import { TelegramParser } from "./core/parsers/telegram";
-import { LocalPresentationService, type PreparedPresentation } from "./core/presentation";
+import { applyNames, type PreparedPresentation, type PresentationNames } from "./core/presentation";
+import { importChat } from "./import/import-chat";
+import CustomizePage from "./pages/CustomizePage";
 import HomePage from "./pages/HomePage";
 import StoryPage from "./pages/StoryPage";
 
-const parser = new TelegramParser();
-const presentationService = new LocalPresentationService();
-
-function parseJson(text: string): unknown {
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error(
-      "This file isn't valid JSON. When exporting from Telegram Desktop, choose Machine-readable JSON, not HTML."
-    );
-  }
-}
-
 function App() {
+  const [imported, setImported] = useState<PreparedPresentation | null>(null);
   const [presentation, setPresentation] = useState<PreparedPresentation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,17 +17,7 @@ function App() {
     setError(null);
 
     try {
-      const exportData = parseJson(await file.text());
-
-      const chat = parser.parse(exportData);
-
-      if (chat.messages.length === 0) {
-        throw new Error("This chat has no messages to analyze.");
-      }
-
-      const preparedPresentation = await presentationService.prepare(chat);
-
-      setPresentation(preparedPresentation);
+      setImported(await importChat(file));
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Unable to process this file.");
     } finally {
@@ -46,8 +25,19 @@ function App() {
     }
   }
 
+  function handleStartStory(names: PresentationNames) {
+    if (imported) {
+      setPresentation({ ...imported, data: applyNames(imported.data, names) });
+    }
+  }
+
+  function handleBack() {
+    setImported(null);
+  }
+
   function handleCloseStory() {
     setPresentation(null);
+    setImported(null);
   }
 
   if (presentation) {
@@ -56,6 +46,10 @@ function App() {
         <StoryPage presentation={presentation} onClose={handleCloseStory} />
       </StoryErrorBoundary>
     );
+  }
+
+  if (imported) {
+    return <CustomizePage data={imported.data} onStart={handleStartStory} onBack={handleBack} />;
   }
 
   return <HomePage isLoading={isLoading} error={error} onImport={handleImport} />;

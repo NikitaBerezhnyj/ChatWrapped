@@ -2,13 +2,22 @@ export * from "./types";
 
 export * from "./formatting";
 
-export type { PresentationDataBuilder } from "./presentation-data-builder";
 export { LocalPresentationDataBuilder } from "./local-presentation-data-builder";
+export type { PresentationDataBuilder } from "./presentation-data-builder";
 
 export type {
-  PresentationOptions,
   PreparedPresentation,
+  PresentationOptions,
   PresentationService
 } from "./presentation-service";
+
+export {
+  applyNames,
+  getAnonymousNames,
+  getDefaultNames,
+  getParticipantList,
+  MAX_NAME_LENGTH,
+  type PresentationNames
+} from "./presentation-names";
 
 export { LocalPresentationService } from "./local-presentation-service";
