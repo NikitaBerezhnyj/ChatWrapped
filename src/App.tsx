@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StoryErrorBoundary } from "./components/StoryErrorBoundary";
 import { TelegramParser } from "./core/parsers/telegram";
 import { LocalPresentationService, type PreparedPresentation } from "./core/presentation";
 import HomePage from "./pages/HomePage";
@@ -50,7 +51,11 @@ function App() {
   }
 
   if (presentation) {
-    return <StoryPage presentation={presentation} onClose={handleCloseStory} />;
+    return (
+      <StoryErrorBoundary onBack={handleCloseStory}>
+        <StoryPage presentation={presentation} onClose={handleCloseStory} />
+      </StoryErrorBoundary>
+    );
   }
 
   return <HomePage isLoading={isLoading} error={error} onImport={handleImport} />;
