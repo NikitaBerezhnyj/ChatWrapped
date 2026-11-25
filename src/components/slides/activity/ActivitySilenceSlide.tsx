@@ -13,14 +13,14 @@ export function ActivitySilenceSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="activity"
-      kicker="EVEN CONVERSATIONS NEED A BREAK"
-      title={["And then", "there was", "silence."]}
+      kicker="LONGEST PAUSE"
+      title={["The longest", "pause."]}
       hero={{
         value: formatters.formatDuration(slide.longestGapMs),
-        label: "THE LONGEST PAUSE BETWEEN TWO MESSAGES",
+        label: "BETWEEN TWO MESSAGES",
         size: "md"
       }}
-      footnote="THE LONGEST GAP IN YOUR CHAT"
+      footnote="NO MESSAGES FOR THIS LONG"
     />
   );
 }

@@ -15,8 +15,8 @@ export function ActivityPeakSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="activity"
-      kicker="WHEN YOU WERE MOST ALIVE"
-      title={["One day stood", "above the rest."]}
+      kicker="THE BUSIEST MOMENTS"
+      title={["The busiest", "day."]}
       hero={{
         value: formatters.formatNumber(mostActiveDay.count),
         label: `MESSAGES ON ${formatters.formatDay(mostActiveDay.date)}`
@@ -35,7 +35,7 @@ export function ActivityPeakSlide({ slide, formatters }: Props) {
           label: `TOP WEEKDAY · ${formatters.formatNumber(mostActiveWeekday.count)} MESSAGES`
         }
       ]}
-      footnote="YOUR CHAT'S BUSIEST MOMENTS"
+      footnote="BY NUMBER OF MESSAGES"
     />
   );
 }

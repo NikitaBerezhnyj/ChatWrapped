@@ -13,13 +13,13 @@ export function ActivityStreakSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="activity"
-      kicker="YOU KEPT THE CONVERSATION GOING"
-      title={["Some things", "just keep", "going."]}
+      kicker="LONGEST STREAK"
+      title={["The longest", "streak of", "active days."]}
       hero={{
         value: formatters.formatNumber(slide.longestActiveStreak),
-        label: "DAYS OF CONVERSATION IN A ROW"
+        label: "DAYS IN A ROW WITH MESSAGES"
       }}
-      footnote="YOUR LONGEST ACTIVE STREAK"
+      footnote="AT LEAST ONE MESSAGE EACH DAY"
     />
   );
 }

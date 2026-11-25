@@ -40,14 +40,14 @@ export function ActivityMonthlySlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="activity"
-      kicker="A YEAR IN CONVERSATION"
-      title={["The months", "that brought", "you closer."]}
+      kicker="MESSAGES BY MONTH"
+      title={["Month", "by month."]}
       hero={{
         value: formatters.formatMonth(peak.month),
         label: `MOST ACTIVE MONTH · ${formatters.formatNumber(peak.count)} MESSAGES`,
         size: "md"
       }}
-      footnote="EVERY MONTH ADDED ANOTHER CHAPTER"
+      footnote="MONTHS WITHOUT MESSAGES COUNT AS ZERO"
     >
       <Bars
         title="MESSAGE ACTIVITY"

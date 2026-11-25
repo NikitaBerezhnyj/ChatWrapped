@@ -15,15 +15,15 @@ export function TextEmojisSlide({ slide, formatters }: Props) {
   const [leading, ...others] = slide.emojis;
 
   return (
-    <SlideFrame tone="text" kicker="A LANGUAGE OF THEIR OWN" footnote="YOUR MOST USED EMOJIS">
-      <Title lines={["More than", "words could", "ever say."]} />
+    <SlideFrame tone="text" kicker="MOST USED EMOJIS" footnote="NUMBER NEXT TO AN EMOJI = TIMES USED">
+      <Title lines={["The most", "used emojis."]} />
 
       <div className={styles.leading}>
         <span className={styles.emoji}>{leading.emoji}</span>
 
         <div className={styles.info}>
           <strong>{formatters.formatNumber(leading.count)}</strong>
-          <span>USES OF YOUR TOP EMOJI</span>
+          <span>USES OF THE TOP EMOJI</span>
         </div>
       </div>
 

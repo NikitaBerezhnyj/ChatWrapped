@@ -21,10 +21,10 @@ export function TextWordsSlide({ slide, formatters }: Props) {
   return (
     <SlideFrame
       tone="text"
-      kicker="THE LANGUAGE OF YOUR CHAT"
-      footnote={`YOUR ${words.length} MOST USED WORDS`}
+      kicker="MOST USED WORDS"
+      footnote="NUMBER NEXT TO A WORD = TIMES USED"
     >
-      <Title lines={["These words", "kept coming", "back."]} />
+      <Title lines={["The most", "used words."]} />
 
       <ul className={styles.cloud}>
         {words.map((word, index) => {

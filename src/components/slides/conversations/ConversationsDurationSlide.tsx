@@ -14,7 +14,7 @@ export function ConversationsDurationSlide({ slide, formatters }: Props) {
     <StatSlide
       tone="conversations"
       kicker="CONVERSATION LENGTH"
-      title={["Some talks", "lasted longer", "than others."]}
+      title={["How long", "conversations", "lasted."]}
       hero={{
         value: formatters.formatDuration(slide.averageDurationMs),
         label: "AVERAGE CONVERSATION",
@@ -26,7 +26,7 @@ export function ConversationsDurationSlide({ slide, formatters }: Props) {
           label: "THE LONGEST ONE LASTED"
         }
       ]}
-      footnote="EVERY MINUTE IS PART OF THE STORY"
+      footnote="FROM FIRST TO LAST MESSAGE OF EACH"
     />
   );
 }

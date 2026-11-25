@@ -19,15 +19,14 @@ export function AchievementsRecapSlide({ slide }: Props) {
   return (
     <StatSlide
       tone="achievements"
-      kicker="YOUR ACHIEVEMENTS"
-      title={["Look what", "you unlocked."]}
+      kicker="ACHIEVEMENTS"
+      title={["Achievements", "unlocked."]}
       hero={{
         value: achievements.length,
         label: achievements.length === 1 ? "ACHIEVEMENT" : "ACHIEVEMENTS",
         size: "md"
       }}
-      footnote="EVERY ACHIEVEMENT TELLS A STORY"
-    >
+          >
       <ul className={styles.grid}>
         {listed.map((achievement, index) => (
           <li

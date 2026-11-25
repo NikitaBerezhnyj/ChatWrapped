@@ -30,10 +30,10 @@ export function ParticipantsBalanceSlide({ slide, formatters }: Props) {
   return (
     <SlideFrame
       tone="participants"
-      kicker="THE PEOPLE BEHIND THE MESSAGES"
+      kicker="PARTICIPANTS"
       footnote={`${formatters.formatNumber(participants.length)} ${participantsLabel} · ${formatters.formatNumber(totalMessages)} MESSAGES`}
     >
-      <Title lines={["Every person", "made this", "conversation."]} />
+      <Title lines={["Who wrote", "how much."]} />
 
       <ol className={styles.list}>
         {listed.map((participant, index) => (

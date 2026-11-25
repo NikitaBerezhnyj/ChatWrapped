@@ -13,8 +13,8 @@ export function OverviewDurationSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="duration"
-      kicker="TIME WELL SPENT"
-      title={["This conversation", "has been around."]}
+      kicker="DURATION"
+      title={["How long", "the chat", "has lasted."]}
       hero={{
         value: formatters.formatDuration(slide.durationMs),
         label: "FROM FIRST MESSAGE TO LAST",

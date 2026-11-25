@@ -13,13 +13,13 @@ export function TextRepeatedSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="text"
-      kicker="SOME THINGS BEAR REPEATING"
-      title={["Once was", "never", "enough."]}
+      kicker="REPEATED MESSAGE"
+      title={["The most", "repeated", "message."]}
       hero={{
         value: formatters.formatNumber(slide.repetitionCount),
-        label: "REPETITIONS OF THE MOST REPEATED MESSAGE"
+        label: "TIMES THE SAME MESSAGE WAS SENT"
       }}
-      footnote="THE MESSAGE THAT KEPT COMING BACK"
+      footnote="CASE AND PUNCTUATION IGNORED"
     />
   );
 }

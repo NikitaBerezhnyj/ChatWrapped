@@ -41,8 +41,7 @@ export function ParticipantProfileSlide({ slide, formatters }: Props) {
         size: "md"
       }}
       stats={stats}
-      footnote="ONE OF THE PEOPLE WHO MADE THIS CHAT"
-    >
+          >
       {participant.messageCount > 0 && (
         <div className={styles.share}>
           <div className={styles.shareHeader}>

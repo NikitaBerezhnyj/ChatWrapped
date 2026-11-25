@@ -14,7 +14,7 @@ export function ConversationsResponsesSlide({ slide, formatters }: Props) {
     <StatSlide
       tone="conversations"
       kicker="RESPONSE TIME"
-      title={["The conversation", "kept moving."]}
+      title={["How fast", "replies came."]}
       hero={{
         value: formatters.formatDuration(slide.averageResponseTimeMs),
         label: "AVERAGE RESPONSE TIME",
@@ -30,7 +30,7 @@ export function ConversationsResponsesSlide({ slide, formatters }: Props) {
           label: "LONGEST RESPONSE"
         }
       ]}
-      footnote="EVERY REPLY HAS ITS OWN TIMING"
+      footnote="TIME TO THE OTHER PERSON'S REPLY"
     />
   );
 }

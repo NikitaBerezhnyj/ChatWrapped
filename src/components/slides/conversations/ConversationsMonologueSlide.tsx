@@ -13,13 +13,13 @@ export function ConversationsMonologueSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="conversations"
-      kicker="THE MONOLOGUE"
-      title={["Sometimes,", "one message", "led to another."]}
+      kicker="MESSAGES IN A ROW"
+      title={["The most", "messages in", "a row."]}
       hero={{
         value: formatters.formatNumber(slide.maxConsecutiveMessages),
-        label: "MESSAGES IN A ROW FROM ONE PERSON"
+        label: "SENT BY ONE PERSON"
       }}
-      footnote="ONE VOICE, MESSAGE AFTER MESSAGE"
+      footnote="NO ONE ELSE WROTE IN BETWEEN"
     />
   );
 }

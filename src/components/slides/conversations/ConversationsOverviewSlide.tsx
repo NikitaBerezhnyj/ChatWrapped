@@ -14,12 +14,12 @@ export function ConversationsOverviewSlide({ slide, formatters }: Props) {
     <StatSlide
       tone="conversations"
       kicker="CONVERSATIONS"
-      title={["Every conversation", "had a beginning."]}
+      title={["The chat", "split into", "conversations."]}
       hero={{
         value: formatters.formatNumber(slide.totalConversations),
         label: slide.totalConversations === 1 ? "CONVERSATION" : "CONVERSATIONS"
       }}
-      footnote="A CLOSER LOOK AT YOUR CONVERSATIONS"
+      footnote="A LONG PAUSE STARTS A NEW CONVERSATION"
     />
   );
 }

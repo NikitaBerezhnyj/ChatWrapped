@@ -14,7 +14,7 @@ export function OverviewVolumeSlide({ slide, formatters }: Props) {
     <StatSlide
       tone="overview"
       kicker="THE BIG PICTURE"
-      title={["A lot can happen", "in a conversation."]}
+      title={["The chat", "in numbers."]}
       hero={{
         value: formatters.formatCompactNumber(slide.totalMessages),
         label: "MESSAGES EXCHANGED"
@@ -28,7 +28,7 @@ export function OverviewVolumeSlide({ slide, formatters }: Props) {
           label: "WITH TEXT"
         }
       ]}
-      footnote="THE NUMBERS BEHIND YOUR CHAT"
+      footnote="WORDS AND CHARACTERS COUNT TEXT ONLY"
     />
   );
 }

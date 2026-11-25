@@ -15,10 +15,10 @@ export function TextPhrasesSlide({ slide, formatters }: Props) {
   return (
     <SlideFrame
       tone="text"
-      kicker="THE PHRASES YOU REPEATED"
-      footnote={`${slide.phrases.length} RECURRING EXPRESSIONS`}
+      kicker="REPEATED PHRASES"
+      footnote="MESSAGES CONTAINING EACH PHRASE"
     >
-      <Title lines={["Some things", "were said", "again."]} />
+      <Title lines={["The most", "repeated", "phrases."]} />
 
       <ol className={styles.list}>
         {slide.phrases.map(item => (

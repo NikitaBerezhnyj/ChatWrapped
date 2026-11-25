@@ -28,7 +28,6 @@ export function AchievementSlide({ slide }: Props) {
     <SlideFrame
       tone="achievements"
       kicker="ACHIEVEMENT UNLOCKED"
-      footnote="ONE MORE THING THAT MADE THIS CHAT UNIQUE"
     >
       <div className={styles.emblem} aria-hidden="true">
         <span className={styles.emblemInner}>

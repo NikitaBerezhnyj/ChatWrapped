@@ -31,10 +31,10 @@ export function ActivityRhythmSlide({ slide, formatters }: Props) {
   return (
     <SlideFrame
       tone="activity"
-      kicker="THE RHYTHM OF YOUR CHAT"
-      footnote="EVERY CONVERSATION HAS A RHYTHM"
+      kicker="MESSAGES BY HOUR AND WEEKDAY"
+      footnote="HOURS IN THE TIME ZONE OF THIS DEVICE"
     >
-      <Title lines={["Every hour", "has its own", "story."]} />
+      <Title lines={["When messages", "were sent."]} />
 
       <Bars
         title="BY HOUR"

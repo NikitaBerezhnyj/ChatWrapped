@@ -20,7 +20,7 @@ export function FinaleSlide({ slide, formatters, onReplay }: Props) {
   ];
 
   return (
-    <SlideFrame tone="finale" kicker="CHAT WRAPPED" footnote="YOUR STORY. YOUR NUMBERS.">
+    <SlideFrame tone="finale" kicker="CHAT WRAPPED" footnote="THE STORY IN NUMBERS.">
       <div className={styles.heading}>
         <Title display lines={["And that's", "a wrap."]} outlineLine={1} />
         <p className={styles.chatTitle}>{slide.chatTitle}</p>

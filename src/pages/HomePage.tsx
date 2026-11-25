@@ -25,7 +25,7 @@ function HomePage({ isLoading, error, onImport }: HomePageProps) {
           <span>CHAT WRAPPED</span>
         </a>
 
-        <span className={styles.headerLabel}>YOUR YEAR IN MESSAGES</span>
+        <span className={styles.headerLabel}>YOUR CHAT IN NUMBERS</span>
       </header>
 
       <section className={styles.hero}>

@@ -15,7 +15,7 @@ export function CoverSlide({ slide, formatters, onNext }: Props) {
   const participantsCount = slide.participants.length;
 
   return (
-    <SlideFrame tone="cover" kicker="YOUR CONVERSATION, RECAP">
+    <SlideFrame tone="cover" kicker="CHAT RECAP">
       <div className={styles.graphic} aria-hidden="true">
         <span />
         <span />

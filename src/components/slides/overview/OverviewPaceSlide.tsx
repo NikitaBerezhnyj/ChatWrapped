@@ -13,8 +13,8 @@ export function OverviewPaceSlide({ slide, formatters }: Props) {
   return (
     <StatSlide
       tone="pace"
-      kicker="THE CONVERSATION'S PACE"
-      title={["Some chats", "never slow down."]}
+      kicker="PACE"
+      title={["Averages", "per day and", "per message."]}
       hero={{
         value: formatters.formatNumber(Math.round(slide.averageMessagesPerActiveDay)),
         label: "MESSAGES PER ACTIVE DAY"
@@ -29,6 +29,7 @@ export function OverviewPaceSlide({ slide, formatters }: Props) {
           label: "CHARACTERS PER MESSAGE"
         }
       ]}
+      footnote="ACTIVE DAY = A DAY WITH A MESSAGE"
     />
   );
 }
