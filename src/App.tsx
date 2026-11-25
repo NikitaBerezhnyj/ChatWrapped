@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { StoryErrorBoundary } from "./components/StoryErrorBoundary";
-import { applyNames, type PreparedPresentation, type PresentationNames } from "./core/presentation";
+import {
+  applyNames,
+  hideMessageTextSlides,
+  type PreparedPresentation,
+  type PresentationNames
+} from "./core/presentation";
 import { importChat } from "./import/import-chat";
 import CustomizePage from "./pages/CustomizePage";
 import HomePage from "./pages/HomePage";
@@ -25,10 +30,17 @@ function App() {
     }
   }
 
-  function handleStartStory(names: PresentationNames) {
-    if (imported) {
-      setPresentation({ ...imported, data: applyNames(imported.data, names) });
+  function handleStartStory(names: PresentationNames, hideTextSlides: boolean) {
+    if (!imported) {
+      return;
     }
+
+    const namedData = applyNames(imported.data, names);
+
+    setPresentation({
+      ...imported,
+      data: hideTextSlides ? hideMessageTextSlides(namedData) : namedData
+    });
   }
 
   function handleBack() {

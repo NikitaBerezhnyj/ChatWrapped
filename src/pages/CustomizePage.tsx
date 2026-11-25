@@ -11,7 +11,7 @@ import styles from "./CustomizePage.module.css";
 
 interface CustomizePageProps {
   data: PresentationData;
-  onStart: (names: PresentationNames) => void;
+  onStart: (names: PresentationNames, hideTextSlides: boolean) => void;
   onBack: () => void;
 }
 
@@ -43,6 +43,7 @@ function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
   const participants = useMemo(() => getParticipantList(data), [data]);
 
   const [names, setNames] = useState<PresentationNames>(defaults);
+  const [hideTextSlides, setHideTextSlides] = useState(false);
 
   function setChatTitle(chatTitle: string) {
     setNames(current => ({ ...current, chatTitle }));
@@ -57,7 +58,7 @@ function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onStart(names);
+    onStart(names, hideTextSlides);
   }
 
   return (
@@ -110,10 +111,22 @@ function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
             ))}
           </div>
 
-          <p className={styles.note}>
-            Words, phrases and repeated messages come from the text of the messages and may contain
-            real names. An empty field keeps the original name.
-          </p>
+          <p className={styles.note}>An empty field keeps the original name.</p>
+
+          <label className={styles.checkbox}>
+            <input
+              type="checkbox"
+              checked={hideTextSlides}
+              onChange={event => setHideTextSlides(event.target.checked)}
+            />
+
+            <span className={styles.checkboxText}>
+              Hide words and phrases
+              <span className={styles.checkboxHint}>
+                These slides are built from the text of messages and may contain real names.
+              </span>
+            </span>
+          </label>
 
           <button className={styles.startButton} type="submit">
             <span>START STORY</span>

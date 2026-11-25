@@ -112,10 +112,42 @@
 }
 
 .note {
-    margin: 24px 0 0;
+    margin: 12px 0 0;
     color: var(--color-subtle);
     font-size: 12px;
     line-height: 1.7;
+}
+
+.checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 28px;
+    cursor: pointer;
+}
+
+.checkbox input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
+.checkboxText {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.checkboxHint {
+    color: var(--color-subtle);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
 }
 
 .startButton {

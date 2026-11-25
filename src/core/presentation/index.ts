@@ -11,6 +11,7 @@ export type {
   PresentationService
 } from "./presentation-service";
 
+export { hideMessageTextSlides } from "./hide-message-text";
 export {
   applyNames,
   getAnonymousNames,
