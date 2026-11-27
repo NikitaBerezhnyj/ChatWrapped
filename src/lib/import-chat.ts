@@ -1,11 +1,11 @@
 import { LocalPresentationFormatterFactory, type PreparedPresentation } from "../core/presentation";
-import type { ImportWorkerResponse } from "./import-chat.worker";
+import type { ImportWorkerResponse } from "../workers/import-chat.worker";
 
 const formatterFactory = new LocalPresentationFormatterFactory();
 
 export function importChat(file: File): Promise<PreparedPresentation> {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(new URL("./import-chat.worker.ts", import.meta.url), {
+    const worker = new Worker(new URL("../workers/import-chat.worker.ts", import.meta.url), {
       type: "module"
     });
 

@@ -1,5 +1,5 @@
+import { processChatExport } from "../core/import/process-chat-export";
 import type { PresentationData } from "../core/presentation";
-import { processChatExport } from "./process-chat-export";
 
 export type ImportWorkerResponse =
   { type: "success"; data: PresentationData } | { type: "error"; message: string };

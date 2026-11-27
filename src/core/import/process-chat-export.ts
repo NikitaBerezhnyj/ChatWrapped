@@ -1,5 +1,5 @@
-import { TelegramParser } from "../core/parsers/telegram";
-import { LocalPresentationService, type PresentationData } from "../core/presentation";
+import { TelegramParser } from "../parsers/telegram";
+import { LocalPresentationService, type PresentationData } from "../presentation";
 
 const parser = new TelegramParser();
 const presentationService = new LocalPresentationService();
