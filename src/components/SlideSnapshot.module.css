@@ -1,0 +1,33 @@
+.snapshot {
+    position: relative;
+    width: 540px;
+    height: 960px;
+    overflow: hidden;
+    container-type: size;
+    --u: min(1cqw, calc(1cqh * 9 / 16));
+
+    color: var(--story-text);
+    background: var(--story-background);
+    font-family: var(--font-family);
+}
+
+.snapshot *,
+.snapshot *::before,
+.snapshot *::after {
+    animation: none !important;
+    transition: none !important;
+}
+
+.snapshot button {
+    display: none;
+}
+
+.brand {
+    position: absolute;
+    top: calc(var(--u) * 7);
+    left: calc(var(--u) * 7);
+    color: var(--story-brand);
+    font-size: calc(var(--u) * 2.4);
+    font-weight: 800;
+    letter-spacing: 0.16em;
+}
