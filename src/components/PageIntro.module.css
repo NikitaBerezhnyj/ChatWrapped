@@ -1,0 +1,51 @@
+.eyebrow {
+    color: var(--color-accent);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.title {
+    margin: 16px 0;
+    font-family: "Space Grotesk", var(--font-family);
+    font-size: clamp(40px, 8vw, 56px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -3px;
+    overflow-wrap: anywhere;
+}
+
+.description {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.intro[data-size="hero"] .title {
+    margin: 25px 0;
+    font-size: clamp(55px, 7vw, 96px);
+    line-height: 0.98;
+    letter-spacing: -6px;
+}
+
+.intro[data-size="hero"] .description {
+    max-width: 420px;
+}
+
+@media (max-width: 800px) {
+    .intro[data-size="hero"] .description {
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro[data-size="hero"] .title {
+        font-size: clamp(48px, 13vw, 64px);
+        letter-spacing: -3.5px;
+    }
+
+    .intro[data-size="hero"] .description {
+        font-size: 13px;
+    }
+}

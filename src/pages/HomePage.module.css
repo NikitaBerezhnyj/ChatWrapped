@@ -1,13 +1,3 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  padding: 0 7%;
-  overflow: hidden;
-  color: var(--color-text);
-  background: var(--color-background);
-}
-
 .header {
   display: flex;
   align-items: center;
@@ -61,83 +51,12 @@
   max-width: 650px;
 }
 
-.heroEyebrow {
-  color: var(--color-accent);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
-.heroTitle {
-  margin: 25px 0;
-  font-family: "Space Grotesk", var(--font-family);
-  font-size: clamp(55px, 7vw, 96px);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -6px;
-}
-
 .heroTitleAccent {
   color: var(--color-accent);
 }
 
-.heroDescription {
-  max-width: 420px;
-  margin: 0;
-  color: var(--color-muted);
-  font-size: 14px;
-  line-height: 1.8;
-}
-
 .importButton {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: min(100%, 340px);
   margin-top: 35px;
-  padding: 19px 20px;
-  color: var(--color-background);
-  background: var(--color-accent);
-  cursor: pointer;
-  transition:
-    background var(--transition-normal),
-    transform var(--transition-normal),
-    opacity var(--transition-fast);
-}
-
-.importButton:hover {
-  background: var(--color-accent-hover);
-  transform: translateY(-2px);
-}
-
-.importButton input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.importButton:has(input:focus-visible) {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 4px;
-}
-
-.importButton span:first-of-type {
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-
-.importButton span:last-child {
-  font-size: 19px;
-}
-
-.importButtonLoading {
-  opacity: 0.65;
-  cursor: wait;
 }
 
 .importStatus {
@@ -276,10 +195,6 @@
 }
 
 @media (max-width: 800px) {
-  .page {
-    padding: 0 var(--space-6);
-  }
-
   .hero {
     grid-template-columns: 1fr;
     padding: 60px 0 30px;
@@ -288,10 +203,6 @@
   .heroContent {
     margin: 0 auto;
     text-align: center;
-  }
-
-  .heroDescription {
-    margin: 0 auto;
   }
 
   .importButton {
@@ -322,25 +233,12 @@
 }
 
 @media (max-width: 480px) {
-  .page {
-    padding: 0 var(--space-5);
-  }
-
   .header {
     padding: 22px 0;
   }
 
   .headerLabel {
     display: none;
-  }
-
-  .heroTitle {
-    font-size: clamp(48px, 13vw, 64px);
-    letter-spacing: -3.5px;
-  }
-
-  .heroDescription {
-    font-size: 13px;
   }
 
   .preview {

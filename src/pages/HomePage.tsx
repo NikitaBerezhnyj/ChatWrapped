@@ -1,4 +1,8 @@
-import type { ChangeEvent } from "react";
+import { ArrowUpRight } from "lucide-react";
+import { useRef, type ChangeEvent } from "react";
+import { Button } from "../components/Button";
+import { Page } from "../components/Page";
+import { PageIntro } from "../components/PageIntro";
 import styles from "./HomePage.module.css";
 
 interface HomePageProps {
@@ -8,6 +12,8 @@ interface HomePageProps {
 }
 
 function HomePage({ isLoading, error, onImport }: HomePageProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
     event.currentTarget.value = "";
@@ -18,7 +24,7 @@ function HomePage({ isLoading, error, onImport }: HomePageProps) {
   }
 
   return (
-    <main className={styles.page}>
+    <Page>
       <header className={styles.header}>
         <a className={styles.brand} href="./">
           <span className={styles.brandSymbol}>cw.</span>
@@ -30,33 +36,35 @@ function HomePage({ isLoading, error, onImport }: HomePageProps) {
 
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <span className={styles.heroEyebrow}>A NEW WAY TO LOOK BACK</span>
+          <PageIntro
+            size="hero"
+            eyebrow="A NEW WAY TO LOOK BACK"
+            title={
+              <>
+                Your conversations.
+                <br />
+                <span className={styles.heroTitleAccent}>Your story.</span>
+              </>
+            }
+            description="The little moments, the big numbers, the words you kept repeating. See your conversation from a different perspective."
+          />
 
-          <h1 className={styles.heroTitle}>
-            Your conversations.
-            <br />
-            <span className={styles.heroTitleAccent}>Your story.</span>
-          </h1>
+          <input
+            ref={inputRef}
+            type="file"
+            accept=".json,application/json"
+            hidden
+            onChange={handleFileChange}
+          />
 
-          <p className={styles.heroDescription}>
-            The little moments, the big numbers, the words you kept repeating. See your conversation
-            from a different perspective.
-          </p>
-
-          <label
-            className={`${styles.importButton} ${isLoading ? styles.importButtonLoading : ""}`}
+          <Button
+            className={styles.importButton}
+            disabled={isLoading}
+            onClick={() => inputRef.current?.click()}
           >
-            <input
-              type="file"
-              accept=".json,application/json"
-              onChange={handleFileChange}
-              disabled={isLoading}
-            />
-
             <span>{isLoading ? "ANALYZING..." : "IMPORT TELEGRAM EXPORT"}</span>
-
-            {!isLoading && <span aria-hidden="true">↗</span>}
-          </label>
+            {!isLoading && <ArrowUpRight width={19} aria-hidden="true" />}
+          </Button>
 
           {isLoading && (
             <p className={styles.importStatus} role="status">
@@ -101,7 +109,7 @@ function HomePage({ isLoading, error, onImport }: HomePageProps) {
         <span>CHAT WRAPPED</span>
         <span>MADE OF MESSAGES.</span>
       </footer>
-    </main>
+    </Page>
   );
 }
 

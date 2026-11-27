@@ -1,4 +1,9 @@
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { useMemo, useState, type FormEvent } from "react";
+import { Button } from "../components/Button";
+import { Page } from "../components/Page";
+import { PageIntro } from "../components/PageIntro";
+import { ThemePicker } from "../components/ThemePicker";
 import {
   getAnonymousNames,
   getDefaultNames,
@@ -7,10 +12,13 @@ import {
   type PresentationData,
   type PresentationNames
 } from "../core/presentation";
+import type { ThemeId } from "../themes/themes";
 import styles from "./CustomizePage.module.css";
 
 interface CustomizePageProps {
   data: PresentationData;
+  theme: ThemeId;
+  onThemeChange: (theme: ThemeId) => void;
   onStart: (names: PresentationNames, hideTextSlides: boolean) => void;
   onBack: () => void;
 }
@@ -38,7 +46,7 @@ function NameField({ label, value, placeholder, onChange }: NameFieldProps) {
   );
 }
 
-function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
+function CustomizePage({ data, theme, onThemeChange, onStart, onBack }: CustomizePageProps) {
   const defaults = useMemo(() => getDefaultNames(data), [data]);
   const participants = useMemo(() => getParticipantList(data), [data]);
 
@@ -62,20 +70,18 @@ function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
   }
 
   return (
-    <main className={styles.page}>
+    <Page>
       <div className={styles.content}>
         <button className={styles.back} type="button" onClick={onBack}>
-          ← BACK
+          <ArrowLeft width={14} aria-hidden="true" />
+          BACK
         </button>
 
-        <span className={styles.eyebrow}>BEFORE YOU START</span>
-
-        <h1 className={styles.title}>Check the names</h1>
-
-        <p className={styles.description}>
-          These names appear on the slides. Change them or anonymize everything before you share
-          anything.
-        </p>
+        <PageIntro
+          eyebrow="BEFORE YOU START"
+          title="Check the names"
+          description="These names appear on the slides. Change them or anonymize everything before you share anything."
+        />
 
         <form onSubmit={handleSubmit}>
           <div className={styles.toolbar}>
@@ -113,6 +119,10 @@ function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
 
           <p className={styles.note}>An empty field keeps the original name.</p>
 
+          <ThemePicker value={theme} onChange={onThemeChange} />
+
+          <label className={styles.checkbox}></label>
+
           <label className={styles.checkbox}>
             <input
               type="checkbox"
@@ -128,13 +138,13 @@ function CustomizePage({ data, onStart, onBack }: CustomizePageProps) {
             </span>
           </label>
 
-          <button className={styles.startButton} type="submit">
+          <Button className={styles.startButton} type="submit">
             <span>START STORY</span>
-            <span aria-hidden="true">↗</span>
-          </button>
+            <ArrowUpRight width={19} aria-hidden="true" />
+          </Button>
         </form>
       </div>
-    </main>
+    </Page>
   );
 }
 

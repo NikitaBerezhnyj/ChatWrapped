@@ -1,4 +1,8 @@
+import { RotateCcw } from "lucide-react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Button } from "./Button";
+import { Page } from "./Page";
+import { PageIntro } from "./PageIntro";
 import styles from "./StoryErrorBoundary.module.css";
 
 interface Props {
@@ -27,20 +31,19 @@ export class StoryErrorBoundary extends Component<Props, State> {
     }
 
     return (
-      <main className={styles.page} role="alert">
-        <div className={styles.content}>
-          <h1 className={styles.title}>Something went wrong</h1>
+      <Page>
+        <div className={styles.content} role="alert">
+          <PageIntro
+            title="Something went wrong"
+            description="We couldn't display this story. Your conversation was not sent anywhere, it stays in your browser."
+          />
 
-          <p className={styles.description}>
-            We couldn't display this story. Your conversation was not sent anywhere, it stays in
-            your browser.
-          </p>
-
-          <button className={styles.button} type="button" onClick={this.props.onBack}>
-            BACK TO START
-          </button>
+          <Button className={styles.button} onClick={this.props.onBack}>
+            <span>BACK TO START</span>
+            <RotateCcw width={16} aria-hidden="true" />
+          </Button>
         </div>
-      </main>
+      </Page>
     );
   }
 }
