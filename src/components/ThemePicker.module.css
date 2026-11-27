@@ -1,0 +1,99 @@
+.picker {
+    min-width: 0;
+    margin: 28px 0 0;
+    padding: 0;
+    border: 0;
+}
+
+.legend {
+    margin-bottom: 12px;
+    padding: 0;
+    color: var(--color-subtle);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+.radio {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background: var(--story-background);
+    border: 1px solid var(--color-border);
+    transition: border-color var(--transition-fast);
+}
+
+.option:hover .card {
+    border-color: var(--color-subtle);
+}
+
+.radio:checked+.card {
+    border-color: var(--color-accent);
+}
+
+.radio:focus-visible+.card {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+}
+
+.swatches {
+    display: flex;
+    height: 44px;
+    overflow: hidden;
+}
+
+.swatch {
+    flex: 1;
+}
+
+.swatch[data-slide="cover"] {
+    background: var(--slide-cover-background);
+}
+
+.swatch[data-slide="overview"] {
+    background: var(--slide-overview-background);
+}
+
+.swatch[data-slide="activity"] {
+    background: var(--slide-activity-background);
+}
+
+.swatch[data-slide="text"] {
+    background: var(--slide-text-background);
+}
+
+.name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--story-text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.accent {
+    width: 10px;
+    height: 10px;
+    background: var(--story-accent);
+    border-radius: var(--radius-full);
+}

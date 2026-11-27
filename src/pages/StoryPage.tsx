@@ -1,10 +1,15 @@
+import { Download, Loader, Pause, Play, Share2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Notice } from "../components/Notice";
 import { SlideRenderer } from "../components/SlideRenderer";
 import type { PreparedPresentation } from "../core/presentation";
+import { useSlideShare } from "../hooks/useSlideShare";
+import type { ThemeId } from "../themes/themes";
 import styles from "./StoryPage.module.css";
 
 interface StoryPageProps {
   presentation: PreparedPresentation;
+  theme: ThemeId;
   onClose: () => void;
 }
 
@@ -13,9 +18,13 @@ const TICK_INTERVAL = 50;
 const LONG_PRESS_DELAY = 350;
 const SWIPE_THRESHOLD = 60;
 
-function StoryPage({ presentation, onClose }: StoryPageProps) {
+function StoryPage({ presentation, theme, onClose }: StoryPageProps) {
   const { slides } = presentation.data;
   const { formatters } = presentation;
+
+  const { canShare, isSharing, notice, share } = useSlideShare(formatters, theme);
+
+  const shareLabel = canShare ? "Share this slide" : "Save this slide as an image";
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -213,79 +222,95 @@ function StoryPage({ presentation, onClose }: StoryPageProps) {
   }
 
   return (
-    <main
-      className={styles.viewer}
-      data-story-theme="default"
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-    >
-      <div className={styles.story}>
-        <div className={styles.progress}>
-          {slides.map((slide, index) => (
-            <div className={styles.progressTrack} key={slide.id}>
-              <div className={styles.progressFill} style={{ width: getProgressWidth(index) }} />
-            </div>
-          ))}
-        </div>
-
-        <header className={styles.header}>
-          <span className={styles.brand}>CHAT WRAPPED</span>
-
-          <div className={styles.headerActions}>
-            <button
-              className={styles.iconButton}
-              type="button"
-              aria-label={isPaused ? "Resume story" : "Pause story"}
-              disabled={isFirstSlide || isLastSlide}
-              onClick={togglePause}
-            >
-              {isPaused ? "▶" : "Ⅱ"}
-            </button>
-
-            <button
-              className={styles.iconButton}
-              type="button"
-              aria-label="Close story"
-              onClick={onClose}
-            >
-              ×
-            </button>
+    <>
+      <main
+        className={styles.viewer}
+        data-story-theme={theme}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+      >
+        <div className={styles.story}>
+          <div className={styles.progress}>
+            {slides.map((slide, index) => (
+              <div className={styles.progressTrack} key={slide.id}>
+                <div className={styles.progressFill} style={{ width: getProgressWidth(index) }} />
+              </div>
+            ))}
           </div>
-        </header>
 
-        <div className={styles.slideViewport} key={activeSlide.id}>
-          <SlideRenderer
-            slide={activeSlide}
-            formatters={formatters}
-            onNext={next}
-            onReplay={replay}
-          />
+          <header className={styles.header}>
+            <span className={styles.brand}>CHAT WRAPPED</span>
+
+            <div className={styles.headerActions}>
+              <button
+                className={styles.iconButton}
+                type="button"
+                aria-label={shareLabel}
+                title={shareLabel}
+                disabled={isSharing}
+                onClick={() => void share(activeSlide)}
+              >
+                {isSharing && <Loader className={styles.spinner} width={18} />}
+                {!isSharing && canShare && <Share2 width={18} />}
+                {!isSharing && !canShare && <Download width={18} />}
+              </button>
+
+              <button
+                className={styles.iconButton}
+                type="button"
+                aria-label={isPaused ? "Resume story" : "Pause story"}
+                disabled={isFirstSlide || isLastSlide}
+                onClick={togglePause}
+              >
+                {isPaused ? <Play width={18} /> : <Pause width={18} />}
+              </button>
+
+              <button
+                className={styles.iconButton}
+                type="button"
+                aria-label="Close story"
+                onClick={onClose}
+              >
+                <X width={18} />
+              </button>
+            </div>
+          </header>
+
+          <div className={styles.slideViewport} key={activeSlide.id}>
+            <SlideRenderer
+              slide={activeSlide}
+              formatters={formatters}
+              onNext={next}
+              onReplay={replay}
+            />
+          </div>
+
+          {isPaused && <div className={styles.pausedIndicator}>PAUSED</div>}
+
+          <div className={styles.navigation}>
+            <button
+              className={styles.navigationZone}
+              type="button"
+              aria-label="Previous slide"
+              onClick={() => handleNavigationClick("previous")}
+            />
+            <button
+              className={styles.navigationZone}
+              type="button"
+              aria-label="Next slide"
+              onClick={() => handleNavigationClick("next")}
+            />
+          </div>
+
+          <footer className={styles.footer}>
+            <span>{String(activeIndex + 1).padStart(2, "0")}</span>
+            <span>{String(slides.length).padStart(2, "0")}</span>
+          </footer>
         </div>
-
-        {isPaused && <div className={styles.pausedIndicator}>PAUSED</div>}
-
-        <div className={styles.navigation}>
-          <button
-            className={styles.navigationZone}
-            type="button"
-            aria-label="Previous slide"
-            onClick={() => handleNavigationClick("previous")}
-          />
-          <button
-            className={styles.navigationZone}
-            type="button"
-            aria-label="Next slide"
-            onClick={() => handleNavigationClick("next")}
-          />
-        </div>
-
-        <footer className={styles.footer}>
-          <span>{String(activeIndex + 1).padStart(2, "0")}</span>
-          <span>{String(slides.length).padStart(2, "0")}</span>
-        </footer>
-      </div>
-    </main>
+      </main>
+      {notice && <Notice {...notice} />}
+    </>
   );
 }
 

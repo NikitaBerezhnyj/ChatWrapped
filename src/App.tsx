@@ -6,7 +6,8 @@ import {
   type PreparedPresentation,
   type PresentationNames
 } from "./core/presentation";
-import { importChat } from "./import/import-chat";
+import { useTheme } from "./hooks/useTheme";
+import { importChat } from "./lib/import-chat";
 import CustomizePage from "./pages/CustomizePage";
 import HomePage from "./pages/HomePage";
 import StoryPage from "./pages/StoryPage";
@@ -16,6 +17,8 @@ function App() {
   const [presentation, setPresentation] = useState<PreparedPresentation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [theme, setTheme] = useTheme();
 
   async function handleImport(file: File) {
     setIsLoading(true);
@@ -55,13 +58,21 @@ function App() {
   if (presentation) {
     return (
       <StoryErrorBoundary onBack={handleCloseStory}>
-        <StoryPage presentation={presentation} onClose={handleCloseStory} />
+        <StoryPage presentation={presentation} theme={theme} onClose={handleCloseStory} />
       </StoryErrorBoundary>
     );
   }
 
   if (imported) {
-    return <CustomizePage data={imported.data} onStart={handleStartStory} onBack={handleBack} />;
+    return (
+      <CustomizePage
+        data={imported.data}
+        theme={theme}
+        onThemeChange={setTheme}
+        onStart={handleStartStory}
+        onBack={handleBack}
+      />
+    );
   }
 
   return <HomePage isLoading={isLoading} error={error} onImport={handleImport} />;

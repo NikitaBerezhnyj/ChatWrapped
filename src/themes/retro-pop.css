@@ -1,0 +1,21 @@
+[data-story-theme="retro-pop"] {
+    --story-backdrop: #17121b;
+    --story-background: #28202d;
+    --story-accent: #f5d45e;
+
+    --slide-cover-background: #3155a4;
+
+    --slide-overview-background: #e95b43;
+    --slide-duration-background: #245b70;
+    --slide-duration-accent: #a5e2df;
+    --slide-pace-background: #b66b32;
+    --slide-pace-accent: #ffe39a;
+    --slide-activity-background: #344b91;
+    --slide-participants-background: #784b83;
+    --slide-text-background: #c34d65;
+    --slide-conversations-background: #35745e;
+    --slide-conversations-accent: #c1edbd;
+    --slide-achievements-background: #a77b32;
+    --slide-achievements-accent: #fff0a8;
+    --slide-finale-background: #302343;
+}

@@ -1,0 +1,21 @@
+[data-story-theme="sunset"] {
+    --story-backdrop: #0e0709;
+    --story-background: #1c0f12;
+    --story-accent: #ffd24d;
+
+    --slide-cover-background: #a3195b;
+
+    --slide-overview-background: #e8531e;
+    --slide-duration-background: #5e1b3f;
+    --slide-duration-accent: #ffb9a0;
+    --slide-pace-background: #7b4309;
+    --slide-pace-accent: #ffe08a;
+    --slide-activity-background: #8a2a1a;
+    --slide-participants-background: #4a1d6b;
+    --slide-text-background: #b3365f;
+    --slide-conversations-background: #8c3a0f;
+    --slide-conversations-accent: #ffd0a6;
+    --slide-achievements-background: #6b2f12;
+    --slide-achievements-accent: #ffd24d;
+    --slide-finale-background: #2b0f1f;
+}

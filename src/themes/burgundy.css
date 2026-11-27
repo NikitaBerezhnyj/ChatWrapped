@@ -1,0 +1,21 @@
+[data-story-theme="burgundy"] {
+    --story-backdrop: #10070b;
+    --story-background: #1b0b12;
+    --story-accent: #e8b9a8;
+
+    --slide-cover-background: #721b36;
+
+    --slide-overview-background: #a52b48;
+    --slide-duration-background: #431326;
+    --slide-duration-accent: #e9b8c5;
+    --slide-pace-background: #68213a;
+    --slide-pace-accent: #f0c6b1;
+    --slide-activity-background: #35152c;
+    --slide-participants-background: #792c4b;
+    --slide-text-background: #8d2946;
+    --slide-conversations-background: #4a192b;
+    --slide-conversations-accent: #e7b9b9;
+    --slide-achievements-background: #713b36;
+    --slide-achievements-accent: #f0d2a8;
+    --slide-finale-background: #250d18;
+}

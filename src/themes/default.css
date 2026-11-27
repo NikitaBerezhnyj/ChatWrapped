@@ -1,22 +1,7 @@
 [data-story-theme="default"] {
     --story-backdrop: #080809;
-    --story-brand: rgb(255 255 255 / 90%);
-    --story-footer: rgb(255 255 255 / 55%);
-    --story-decoration-border: rgb(255 255 255 / 28%);
-    --story-decoration-fill: rgb(255 255 255 / 8%);
-
     --story-background: #171719;
-    --story-text: #ffffff;
-    --story-muted: rgb(255 255 255 / 65%);
     --story-accent: #d4ff43;
-
-    --story-overlay: rgb(0 0 0 / 22%);
-    --story-overlay-strong: rgb(0 0 0 / 65%);
-    --story-overlay-hover: rgb(255 255 255 / 18%);
-    --story-border: rgb(255 255 255 / 24%);
-    --story-border-subtle: rgb(255 255 255 / 20%);
-    --story-progress-track: rgb(255 255 255 / 28%);
-    --story-progress-fill: #ffffff;
 
     --slide-cover-background: #5828a8;
 

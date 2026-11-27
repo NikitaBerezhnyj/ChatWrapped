@@ -1,0 +1,21 @@
+[data-story-theme="noir"] {
+    --story-backdrop: #050505;
+    --story-background: #111111;
+    --story-accent: #f2e9d8;
+
+    --slide-cover-background: #2a2a31;
+
+    --slide-overview-background: #3a3a42;
+    --slide-duration-background: #202026;
+    --slide-duration-accent: #d9e6f2;
+    --slide-pace-background: #2e2b26;
+    --slide-pace-accent: #efe3c0;
+    --slide-activity-background: #1f2530;
+    --slide-participants-background: #2a2430;
+    --slide-text-background: #302228;
+    --slide-conversations-background: #1f2b27;
+    --slide-conversations-accent: #cfe8df;
+    --slide-achievements-background: #302a1f;
+    --slide-achievements-accent: #f0d9a0;
+    --slide-finale-background: #151517;
+}

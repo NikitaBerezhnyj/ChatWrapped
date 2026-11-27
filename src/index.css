@@ -1,5 +1,10 @@
+@import "./themes/base.css";
 @import "./themes/default.css";
-@import "./themes/neon-night.css";
+@import "./themes/sunset.css";
+@import "./themes/ocean.css";
+@import "./themes/noir.css";
+@import "./themes/burgundy.css";
+@import "./themes/retro-pop.css";
 
 :root {
     --font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
