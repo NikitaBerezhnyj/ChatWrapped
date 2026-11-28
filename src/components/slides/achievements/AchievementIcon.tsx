@@ -1,14 +1,17 @@
 import {
   BookOpen,
   CalendarRange,
+  Flag,
   Flame,
   Keyboard,
   MessageSquare,
   MessagesSquare,
+  Mic,
   Moon,
   MoonStar,
   Smile,
   Star,
+  Zap,
   type LucideIcon
 } from "lucide-react";
 
@@ -21,7 +24,10 @@ const ICONS: Record<string, LucideIcon> = {
   "messages-square": MessagesSquare,
   moon: Moon,
   "moon-star": MoonStar,
-  smile: Smile
+  smile: Smile,
+  flag: Flag,
+  mic: Mic,
+  zap: Zap
 };
 
 export function AchievementIcon({ name }: { name: string }) {

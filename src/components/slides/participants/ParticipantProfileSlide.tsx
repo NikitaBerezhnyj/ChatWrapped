@@ -16,11 +16,9 @@ export function ParticipantProfileSlide({ slide, formatters }: Props) {
 
   const stats = [
     { label: "WORDS SENT", count: participant.wordCount },
-    { label: "CHARACTERS", count: participant.characterCount },
     { label: "AVG. MESSAGE LENGTH", count: Math.round(participant.averageMessageLength) },
-    { label: "NIGHT MESSAGES", count: participant.nightMessages },
-    { label: "EMOJIS USED", count: participant.emojiCount },
-    { label: "CONVERSATIONS STARTED", count: participant.startedConversations }
+    { label: "MOST IN A ROW", count: participant.maxConsecutiveMessages },
+    { label: "EMOJIS USED", count: participant.emojiCount }
   ]
     .filter(stat => stat.count > 0)
     .map(stat => ({
@@ -37,11 +35,21 @@ export function ParticipantProfileSlide({ slide, formatters }: Props) {
       title={[participant.name]}
       hero={{
         value: formatters.formatNumber(participant.messageCount),
-        label: "MESSAGES IN THIS CONVERSATION",
+        label: "MESSAGES SENT",
         size: "md"
       }}
       stats={stats}
-          >
+      singleLineTitle
+    >
+      {participant.distinctiveWords.length > 0 && (
+        <div className={styles.words}>
+          <span className={styles.wordsLabel}>DISTINCTIVE WORDS</span>
+          <p className={styles.wordsList}>
+            {participant.distinctiveWords.map(item => item.word).join(", ")}
+          </p>
+        </div>
+      )}
+
       {participant.messageCount > 0 && (
         <div className={styles.share}>
           <div className={styles.shareHeader}>

@@ -4,11 +4,16 @@ interface Props {
   lines: string[];
   display?: boolean;
   outlineLine?: number;
+  singleLine?: boolean;
 }
 
-export function Title({ lines, display, outlineLine }: Props) {
+export function Title({ lines, display, outlineLine, singleLine }: Props) {
   return (
-    <h2 className={styles.title} data-display={display || undefined}>
+    <h2
+      className={styles.title}
+      data-display={display || undefined}
+      data-single-line={singleLine || undefined}
+    >
       {lines.map((line, index) => (
         <span key={line} data-outline={index === outlineLine || undefined}>
           {line}

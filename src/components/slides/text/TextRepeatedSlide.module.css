@@ -1,0 +1,37 @@
+.message {
+    display: -webkit-box;
+    flex: none;
+    margin: 0;
+    overflow: hidden;
+    color: var(--tone-accent);
+    font-size: calc(var(--u) * 7);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+}
+
+.count {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 1.5);
+    padding-top: calc(var(--u) * 5);
+    border-top: 1px solid var(--story-decoration-border);
+}
+
+.count strong {
+    font-size: calc(var(--u) * 15);
+    font-weight: 950;
+    letter-spacing: -0.075em;
+    line-height: 1;
+}
+
+.count span {
+    color: var(--story-muted);
+    font-size: var(--fs-label);
+    font-weight: 800;
+    letter-spacing: 0.15em;
+}

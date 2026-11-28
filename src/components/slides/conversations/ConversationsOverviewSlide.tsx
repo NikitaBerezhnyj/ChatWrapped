@@ -10,6 +10,20 @@ interface Props {
 }
 
 export function ConversationsOverviewSlide({ slide, formatters }: Props) {
+  const durationStats =
+    slide.longestDurationMs > 0
+      ? [
+          {
+            value: formatters.formatDuration(slide.averageDurationMs),
+            label: "AVERAGE LENGTH"
+          },
+          {
+            value: formatters.formatDuration(slide.longestDurationMs),
+            label: "THE LONGEST ONE"
+          }
+        ]
+      : [];
+
   return (
     <StatSlide
       tone="conversations"
@@ -19,6 +33,7 @@ export function ConversationsOverviewSlide({ slide, formatters }: Props) {
         value: formatters.formatNumber(slide.totalConversations),
         label: slide.totalConversations === 1 ? "CONVERSATION" : "CONVERSATIONS"
       }}
+      stats={durationStats}
       footnote="A LONG PAUSE STARTS A NEW CONVERSATION"
     />
   );

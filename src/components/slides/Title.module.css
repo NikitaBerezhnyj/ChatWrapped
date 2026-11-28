@@ -25,3 +25,10 @@
     color: transparent;
     -webkit-text-stroke: 1.5px var(--story-text);
 }
+
+.title[data-single-line] span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}

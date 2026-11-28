@@ -6,18 +6,19 @@ import { ActivityPeakSlide } from "./slides/activity/ActivityPeakSlide";
 import { ActivityRhythmSlide } from "./slides/activity/ActivityRhythmSlide";
 import { ActivitySilenceSlide } from "./slides/activity/ActivitySilenceSlide";
 import { ActivityStreakSlide } from "./slides/activity/ActivityStreakSlide";
-import { ConversationsDurationSlide } from "./slides/conversations/ConversationsDurationSlide";
-import { ConversationsMonologueSlide } from "./slides/conversations/ConversationsMonologueSlide";
 import { ConversationsOverviewSlide } from "./slides/conversations/ConversationsOverviewSlide";
+import { ConversationsParticipantsSlide } from "./slides/conversations/ConversationsParticipantsSlide";
 import { ConversationsResponsesSlide } from "./slides/conversations/ConversationsResponsesSlide";
 import { CoverSlide } from "./slides/CoverSlide";
 import { FinaleSlide } from "./slides/FinaleSlide";
 import { OverviewDurationSlide } from "./slides/overview/OverviewDurationSlide";
+import { OverviewMediaSlide } from "./slides/overview/OverviewMediaSlide";
 import { OverviewPaceSlide } from "./slides/overview/OverviewPaceSlide";
 import { OverviewVolumeSlide } from "./slides/overview/OverviewVolumeSlide";
 import { ParticipantProfileSlide } from "./slides/participants/ParticipantProfileSlide";
 import { ParticipantsBalanceSlide } from "./slides/participants/ParticipantsBalanceSlide";
 import { TextEmojisSlide } from "./slides/text/TextEmojisSlide";
+import { TextLengthSlide } from "./slides/text/TextLengthSlide";
 import { TextPhrasesSlide } from "./slides/text/TextPhrasesSlide";
 import { TextRepeatedSlide } from "./slides/text/TextRepeatedSlide";
 import { TextWordsSlide } from "./slides/text/TextWordsSlide";
@@ -42,6 +43,9 @@ export function SlideRenderer({ slide, formatters, onNext, onReplay }: SlideRend
 
     case "overview_pace":
       return <OverviewPaceSlide slide={slide} formatters={formatters} />;
+
+    case "overview_media":
+      return <OverviewMediaSlide slide={slide} formatters={formatters} />;
 
     case "finale":
       return <FinaleSlide slide={slide} formatters={formatters} onReplay={onReplay} />;
@@ -79,17 +83,17 @@ export function SlideRenderer({ slide, formatters, onNext, onReplay }: SlideRend
     case "text_repeated":
       return <TextRepeatedSlide slide={slide} formatters={formatters} />;
 
+    case "text_length":
+      return <TextLengthSlide slide={slide} formatters={formatters} />;
+
     case "conversations_overview":
       return <ConversationsOverviewSlide slide={slide} formatters={formatters} />;
 
-    case "conversations_duration":
-      return <ConversationsDurationSlide slide={slide} formatters={formatters} />;
+    case "conversations_participants":
+      return <ConversationsParticipantsSlide slide={slide} formatters={formatters} />;
 
     case "conversations_responses":
       return <ConversationsResponsesSlide slide={slide} formatters={formatters} />;
-
-    case "conversations_monologue":
-      return <ConversationsMonologueSlide slide={slide} formatters={formatters} />;
 
     case "achievement":
       return <AchievementSlide slide={slide} />;

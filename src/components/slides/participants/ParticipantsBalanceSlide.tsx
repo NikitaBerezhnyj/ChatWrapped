@@ -49,7 +49,8 @@ export function ParticipantsBalanceSlide({ slide, formatters }: Props) {
             <ShareBar value={participant.messageShare} />
 
             <span className={styles.count}>
-              {formatters.formatNumber(participant.messageCount)} messages
+              {formatters.formatNumber(participant.messageCount)} messages ·{" "}
+              {formatters.formatPercentage(participant.wordShare)} of words
             </span>
           </li>
         ))}

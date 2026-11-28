@@ -15,12 +15,22 @@ interface Props {
   stats?: Array<{ value: ReactNode; label: string }>;
   footnote?: ReactNode;
   children?: ReactNode;
+  singleLineTitle?: boolean;
 }
 
-export function StatSlide({ tone, kicker, title, hero, stats = [], footnote, children }: Props) {
+export function StatSlide({
+  tone,
+  kicker,
+  title,
+  hero,
+  stats = [],
+  footnote,
+  children,
+  singleLineTitle = false
+}: Props) {
   return (
     <SlideFrame tone={tone} kicker={kicker} footnote={footnote}>
-      <Title lines={title} />
+      <Title lines={title} singleLine={singleLineTitle} />
 
       <div className={styles.hero} data-size={hero.size ?? "lg"}>
         <strong className={styles.value}>{hero.value}</strong>
