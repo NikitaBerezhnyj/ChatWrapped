@@ -1,4 +1,5 @@
 import type { Achievement } from "../../achievements";
+import type { ConversationStats, OverviewStats } from "../../analytics";
 
 export type PresentationSlideType =
   | "cover"
@@ -15,6 +16,7 @@ export type PresentationSlideKind =
   | "overview_volume"
   | "overview_duration"
   | "overview_pace"
+  | "overview_media"
   | "activity_peak"
   | "activity_rhythm"
   | "activity_streak"
@@ -26,10 +28,10 @@ export type PresentationSlideKind =
   | "text_phrases"
   | "text_emojis"
   | "text_repeated"
+  | "text_length"
   | "conversations_overview"
-  | "conversations_duration"
+  | "conversations_participants"
   | "conversations_responses"
-  | "conversations_monologue"
   | "achievement"
   | "achievements_recap"
   | "finale";
@@ -85,6 +87,13 @@ export interface OverviewPaceSlide extends PresentationSlideBase {
   averageCharactersPerMessage: number;
 }
 
+export interface OverviewMediaSlide extends PresentationSlideBase {
+  type: "overview";
+  kind: "overview_media";
+  totalMedia: number;
+  mediaCounts: OverviewStats["mediaCounts"];
+}
+
 export interface ActivityPeakSlide extends PresentationSlideBase {
   type: "activity";
   kind: "activity_peak";
@@ -137,6 +146,11 @@ export interface ParticipantStatistics {
   nightMessages: number;
   emojiCount: number;
   startedConversations: number;
+  endedConversations: number;
+  medianResponseTimeMs: number;
+  responseCount: number;
+  maxConsecutiveMessages: number;
+  distinctiveWords: Array<{ word: string; count: number }>;
 }
 
 export interface ParticipantProfileSlide extends PresentationSlideBase {
@@ -167,34 +181,46 @@ export interface TextEmojisSlide extends PresentationSlideBase {
 export interface TextRepeatedSlide extends PresentationSlideBase {
   type: "text";
   kind: "text_repeated";
+  text: string;
   repetitionCount: number;
+}
+
+export interface TextLengthSlide extends PresentationSlideBase {
+  type: "text";
+  kind: "text_length";
+  longestCharacterCount: number;
+  shortestCharacterCount: number;
 }
 
 export interface ConversationsOverviewSlide extends PresentationSlideBase {
   type: "conversations";
   kind: "conversations_overview";
   totalConversations: number;
-}
-
-export interface ConversationsDurationSlide extends PresentationSlideBase {
-  type: "conversations";
-  kind: "conversations_duration";
   averageDurationMs: number;
   longestDurationMs: number;
+}
+
+export interface ConversationsParticipantsSlide extends PresentationSlideBase {
+  type: "conversations";
+  kind: "conversations_participants";
+  participants: Array<
+    Pick<
+      ParticipantStatistics,
+      | "id"
+      | "name"
+      | "startedConversations"
+      | "endedConversations"
+      | "medianResponseTimeMs"
+      | "responseCount"
+    >
+  >;
 }
 
 export interface ConversationsResponsesSlide extends PresentationSlideBase {
   type: "conversations";
   kind: "conversations_responses";
-  averageResponseTimeMs: number;
-  fastestResponseTimeMs: number;
-  longestResponseTimeMs: number;
-}
-
-export interface ConversationsMonologueSlide extends PresentationSlideBase {
-  type: "conversations";
-  kind: "conversations_monologue";
-  maxConsecutiveMessages: number;
+  medianResponseTimeMs: number;
+  responseTimeShares: ConversationStats["responseTimeShares"];
 }
 
 export interface AchievementSlide extends PresentationSlideBase {
@@ -225,6 +251,7 @@ export type PresentationSlide =
   | OverviewVolumeSlide
   | OverviewDurationSlide
   | OverviewPaceSlide
+  | OverviewMediaSlide
   | ActivityPeakSlide
   | ActivityRhythmSlide
   | ActivityStreakSlide
@@ -236,10 +263,10 @@ export type PresentationSlide =
   | TextPhrasesSlide
   | TextEmojisSlide
   | TextRepeatedSlide
+  | TextLengthSlide
   | ConversationsOverviewSlide
-  | ConversationsDurationSlide
+  | ConversationsParticipantsSlide
   | ConversationsResponsesSlide
-  | ConversationsMonologueSlide
   | AchievementSlide
   | AchievementsRecapSlide
   | FinaleSlide;

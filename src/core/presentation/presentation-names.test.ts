@@ -10,52 +10,43 @@ import {
 } from "./presentation-names";
 import type { PresentationData } from "./types";
 
+const aliceMessages = Array.from({ length: 1_000 }, (_, index) => ({
+  id: String(index),
+  senderId: "user-1",
+  timestamp: 1_000 + index * 1_000,
+  type: "text" as const,
+  text: "Hello"
+}));
+
+const bobMessage = {
+  id: "bob",
+  senderId: "user-2",
+  timestamp: 2_000_000,
+  type: "text" as const,
+  text: "Hi"
+};
+
+const chat: ChatData = {
+  id: "chat-1",
+  title: "Alice and Bob",
+  type: "private",
+  participants: [
+    { id: "user-1", name: "Alice" },
+    { id: "user-2", name: "Bob" }
+  ],
+  messages: [...aliceMessages, bobMessage]
+};
+
 async function createData(): Promise<PresentationData> {
-  const aliceMessages = Array.from({ length: 1_000 }, (_, index) => ({
-    id: String(index),
-    senderId: "user-1",
-    timestamp: 1_000 + index * 1_000,
-    type: "text" as const,
-    text: "Hello"
-  }));
-
-  const bobMessage = {
-    id: "bob",
-    senderId: "user-2",
-    timestamp: 2_000_000,
-    type: "text" as const,
-    text: "Hi"
-  };
-
-  const chat: ChatData = {
-    id: "chat-1",
-    title: "Alice and Bob",
-    type: "private",
-    participants: [
-      { id: "user-1", name: "Alice" },
-      { id: "user-2", name: "Bob" }
-    ],
-    messages: [...aliceMessages, bobMessage]
-  };
-
   const analysis = await new LocalChatAnalysisPipeline().analyze(chat);
 
   return new LocalPresentationDataBuilder().build(chat, analysis);
 }
 
-function createDataWithParticipants(
-  data: PresentationData,
-  participants: Array<{ id: string; name: string }>
-): PresentationData {
-  const result = structuredClone(data);
-
-  for (const slide of result.slides) {
-    if (slide.kind === "cover" || slide.kind === "participants_balance") {
-      slide.participants = participants;
-    }
-  }
-
-  return result;
+function getProfileNames(data: PresentationData): string[] {
+  return data.slides.flatMap(slide =>
+    slide.kind === "participant_profile" ? [slide.participant.name] : []
+  );
 }
 
 describe("presentation names", () => {
@@ -79,7 +70,7 @@ describe("presentation names", () => {
 
   describe("getDefaultNames", () => {
     it("returns participant names and builds a title for two participants", () => {
-      expect(getDefaultNames(data)).toEqual({
+      expect(getDefaultNames(chat)).toEqual({
         chatTitle: "Alice & Bob",
         participants: { "user-1": "Alice", "user-2": "Bob" }
       });
@@ -118,7 +109,7 @@ describe("presentation names", () => {
         participants: { "user-1": "Anna" }
       });
 
-      expect(getDefaultNames(result).participants).toEqual({ "user-1": "Anna", "user-2": "Bob" });
+      expect(getProfileNames(result)).toEqual(["Anna", "Bob"]);
     });
 
     it("trims names and limits their length", () => {
@@ -127,7 +118,7 @@ describe("presentation names", () => {
         participants: { "user-1": `  ${"A".repeat(100)}  ` }
       });
 
-      expect(getDefaultNames(result).participants["user-1"]).toBe("A".repeat(MAX_NAME_LENGTH));
+      expect(getProfileNames(result)).toContain("A".repeat(MAX_NAME_LENGTH));
     });
 
     it("keeps slide order and IDs", () => {
@@ -153,14 +144,14 @@ describe("presentation names", () => {
 
   describe("getAnonymousNames", () => {
     it("numbers participants by activity and builds an anonymous title", () => {
-      expect(getAnonymousNames(data)).toEqual({
+      expect(getAnonymousNames(chat)).toEqual({
         chatTitle: "Person 1 & Person 2",
         participants: { "user-1": "Person 1", "user-2": "Person 2" }
       });
     });
 
     it("hides the original names once applied", () => {
-      const serialized = JSON.stringify(applyNames(data, getAnonymousNames(data)));
+      const serialized = JSON.stringify(applyNames(data, getAnonymousNames(chat)));
 
       expect(serialized).not.toContain("Alice");
       expect(serialized).not.toContain("Bob");
@@ -170,27 +161,29 @@ describe("presentation names", () => {
 
   describe("chat title", () => {
     it("keeps the original title for one participant", () => {
-      const oneParticipant = createDataWithParticipants(data, [{ id: "user-1", name: "Alice" }]);
+      const result = getDefaultNames({ ...chat, participants: [chat.participants[0]] });
 
-      expect(getDefaultNames(oneParticipant).chatTitle).toBe("Alice and Bob");
+      expect(result.chatTitle).toBe("Alice and Bob");
     });
 
     it("keeps the original title for more than two participants", () => {
-      const threeParticipants = createDataWithParticipants(data, [
-        { id: "user-1", name: "Alice" },
-        { id: "user-2", name: "Bob" },
-        { id: "user-3", name: "Charlie" }
-      ]);
+      const participants = [...chat.participants, { id: "user-3", name: "Charlie" }];
 
-      expect(getDefaultNames(threeParticipants).chatTitle).toBe("Alice and Bob");
+      expect(getDefaultNames({ ...chat, participants }).chatTitle).toBe("Alice and Bob");
     });
 
     it("uses participant names for a two-person chat", () => {
-      expect(getDefaultNames(data).chatTitle).toBe("Alice & Bob");
+      expect(getDefaultNames(chat).chatTitle).toBe("Alice & Bob");
+    });
+
+    it("orders participants by message count", () => {
+      const participants = [...chat.participants].reverse();
+
+      expect(getAnonymousNames({ ...chat, participants }).participants["user-1"]).toBe("Person 1");
     });
 
     it("uses anonymous participant names for a two-person chat", () => {
-      expect(getAnonymousNames(data).chatTitle).toBe("Person 1 & Person 2");
+      expect(getAnonymousNames(chat).chatTitle).toBe("Person 1 & Person 2");
     });
   });
 });

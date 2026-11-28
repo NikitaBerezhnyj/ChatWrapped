@@ -40,23 +40,26 @@ describe("hideMessageTextSlides", () => {
 
     expect(kinds).toContain("text_words");
     expect(kinds).toContain("text_phrases");
+    expect(kinds).toContain("text_repeated");
     expect(JSON.stringify(data)).toContain("secretword");
   });
 
-  it("removes the words and phrases slides", () => {
+  it("removes the slides that show message text", () => {
     const result = hideMessageTextSlides(data);
     const kinds = result.slides.map(slide => slide.kind);
 
     expect(kinds).not.toContain("text_words");
     expect(kinds).not.toContain("text_phrases");
+    expect(kinds).not.toContain("text_repeated");
     expect(JSON.stringify(result)).not.toContain("secretword");
   });
 
   it("keeps all other slides in their original order", () => {
     const result = hideMessageTextSlides(data);
 
+    const hiddenKinds = ["text_words", "text_phrases", "text_repeated"];
     const expectedIds = data.slides
-      .filter(slide => slide.kind !== "text_words" && slide.kind !== "text_phrases")
+      .filter(slide => !hiddenKinds.includes(slide.kind))
       .map(slide => slide.id);
 
     expect(result.slides.map(slide => slide.id)).toEqual(expectedIds);

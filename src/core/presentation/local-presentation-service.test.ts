@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ChatData } from "../models";
 import type { ChatAnalysisPipeline, ChatAnalysisResult } from "../pipeline";
-import type { PresentationData } from "./types";
-import type { PresentationDataBuilder } from "./presentation-data-builder";
 import type { PresentationFormatterFactory, PresentationFormatters } from "./formatting";
 import { DEFAULT_PRESENTATION_FORMATTING_OPTIONS } from "./formatting";
 import { LocalPresentationService } from "./local-presentation-service";
+import type { PresentationDataBuilder } from "./presentation-data-builder";
+import type { PresentationData } from "./types";
 
 function createChat(): ChatData {
   return {
@@ -29,7 +29,8 @@ function createAnalysisResult(): ChatAnalysisResult {
         activeDays: 0,
         averageMessagesPerActiveDay: 0,
         averageWordsPerMessage: 0,
-        averageCharactersPerMessage: 0
+        averageCharactersPerMessage: 0,
+        mediaCounts: []
       },
       activity: {
         byDay: [],
@@ -56,7 +57,7 @@ function createAnalysisResult(): ChatAnalysisResult {
         totalConversations: 0,
         averageDurationMs: 0,
         longestDurationMs: 0,
-        averageResponseTimeMs: 0,
+        medianResponseTimeMs: 0,
         fastestResponseTimeMs: 0,
         longestResponseTimeMs: 0,
         maxConsecutiveMessages: 0

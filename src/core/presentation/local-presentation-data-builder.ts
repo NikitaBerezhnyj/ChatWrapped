@@ -25,7 +25,7 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
       ...this.buildActivitySlides(analysis),
       ...this.buildParticipantSlides(participants),
       ...this.buildTextSlides(analysis),
-      ...this.buildConversationSlides(analysis),
+      ...this.buildConversationSlides(analysis, participants),
       ...this.buildAchievementSlides(unlockedAchievements, participants),
       this.buildFinaleSlide(chat, analysis, participants.length)
     ];
@@ -93,6 +93,16 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
         averageMessagesPerActiveDay: overview.averageMessagesPerActiveDay,
         averageWordsPerMessage: overview.averageWordsPerMessage,
         averageCharactersPerMessage: overview.averageCharactersPerMessage
+      });
+    }
+
+    if (overview.mediaCounts.length > 0) {
+      slides.push({
+        id: "overview-media",
+        type: "overview",
+        kind: "overview_media",
+        totalMedia: overview.mediaCounts.reduce((total, item) => total + item.count, 0),
+        mediaCounts: overview.mediaCounts.map(item => ({ ...item }))
       });
     }
 
@@ -221,14 +231,34 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
         id: "text-repeated",
         type: "text",
         kind: "text_repeated",
+        text: text.mostRepeatedMessage.text,
         repetitionCount: text.mostRepeatedMessage.count
+      });
+    }
+
+    const { longestMessage, shortestMessage } = text;
+
+    if (
+      longestMessage &&
+      shortestMessage &&
+      longestMessage.characterCount > shortestMessage.characterCount
+    ) {
+      slides.push({
+        id: "text-length",
+        type: "text",
+        kind: "text_length",
+        longestCharacterCount: longestMessage.characterCount,
+        shortestCharacterCount: shortestMessage.characterCount
       });
     }
 
     return slides;
   }
 
-  private buildConversationSlides(analysis: ChatAnalysisResult): PresentationSlide[] {
+  private buildConversationSlides(
+    analysis: ChatAnalysisResult,
+    participants: ParticipantStatistics[]
+  ): PresentationSlide[] {
     const { conversations } = analysis.analytics;
     const slides: PresentationSlide[] = [];
 
@@ -237,37 +267,37 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
         id: "conversations-overview",
         type: "conversations",
         kind: "conversations_overview",
-        totalConversations: conversations.totalConversations
-      });
-    }
-
-    if (conversations.longestDurationMs > 0) {
-      slides.push({
-        id: "conversations-duration",
-        type: "conversations",
-        kind: "conversations_duration",
+        totalConversations: conversations.totalConversations,
         averageDurationMs: conversations.averageDurationMs,
         longestDurationMs: conversations.longestDurationMs
       });
     }
 
-    if (conversations.averageResponseTimeMs > 0) {
+    const activeParticipants = participants.filter(participant => participant.messageCount > 0);
+
+    if (activeParticipants.length > 1) {
+      slides.push({
+        id: "conversations-participants",
+        type: "conversations",
+        kind: "conversations_participants",
+        participants: activeParticipants.map(participant => ({
+          id: participant.id,
+          name: participant.name,
+          startedConversations: participant.startedConversations,
+          endedConversations: participant.endedConversations,
+          medianResponseTimeMs: participant.medianResponseTimeMs,
+          responseCount: participant.responseCount
+        }))
+      });
+    }
+
+    if (conversations.medianResponseTimeMs > 0) {
       slides.push({
         id: "conversations-responses",
         type: "conversations",
         kind: "conversations_responses",
-        averageResponseTimeMs: conversations.averageResponseTimeMs,
-        fastestResponseTimeMs: conversations.fastestResponseTimeMs,
-        longestResponseTimeMs: conversations.longestResponseTimeMs
-      });
-    }
-
-    if (conversations.maxConsecutiveMessages > 1) {
-      slides.push({
-        id: "conversations-monologue",
-        type: "conversations",
-        kind: "conversations_monologue",
-        maxConsecutiveMessages: conversations.maxConsecutiveMessages
+        medianResponseTimeMs: conversations.medianResponseTimeMs,
+        responseTimeShares: { ...conversations.responseTimeShares }
       });
     }
 
@@ -361,7 +391,12 @@ export class LocalPresentationDataBuilder implements PresentationDataBuilder {
           averageMessageLength: stats?.averageMessageLength ?? 0,
           nightMessages: stats?.nightMessages ?? 0,
           emojiCount: stats?.emojiCount ?? 0,
-          startedConversations: stats?.startedConversations ?? 0
+          startedConversations: stats?.startedConversations ?? 0,
+          endedConversations: stats?.endedConversations ?? 0,
+          medianResponseTimeMs: stats?.medianResponseTimeMs ?? 0,
+          responseCount: stats?.responseCount ?? 0,
+          maxConsecutiveMessages: stats?.maxConsecutiveMessages ?? 0,
+          distinctiveWords: stats?.distinctiveWords.map(item => ({ ...item })) ?? []
         };
       })
       .sort((a, b) => b.messageCount - a.messageCount);
