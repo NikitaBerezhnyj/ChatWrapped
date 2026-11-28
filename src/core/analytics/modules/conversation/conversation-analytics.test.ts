@@ -37,10 +37,16 @@ describe("analyzeConversations", () => {
       totalConversations: 0,
       averageDurationMs: 0,
       longestDurationMs: 0,
-      averageResponseTimeMs: 0,
+      medianResponseTimeMs: 0,
       fastestResponseTimeMs: 0,
       longestResponseTimeMs: 0,
-      maxConsecutiveMessages: 0
+      maxConsecutiveMessages: 0,
+      responseTimeShares: {
+        underOneMinute: 0,
+        oneToFiveMinutes: 0,
+        fiveToSixtyMinutes: 0,
+        overOneHour: 0
+      }
     });
   });
 
@@ -164,7 +170,7 @@ describe("analyzeConversations", () => {
 
     const result = analyzeConversations(messages, defaultOptions);
 
-    expect(result.averageResponseTimeMs).toBe(90_000);
+    expect(result.medianResponseTimeMs).toBe(90_000);
     expect(result.fastestResponseTimeMs).toBe(60_000);
     expect(result.longestResponseTimeMs).toBe(120_000);
   });
@@ -188,7 +194,7 @@ describe("analyzeConversations", () => {
     const result = analyzeConversations(messages, defaultOptions);
 
     expect(result.totalConversations).toBe(2);
-    expect(result.averageResponseTimeMs).toBe(0);
+    expect(result.medianResponseTimeMs).toBe(0);
     expect(result.fastestResponseTimeMs).toBe(0);
     expect(result.longestResponseTimeMs).toBe(0);
   });
@@ -214,7 +220,7 @@ describe("analyzeConversations", () => {
 
     const result = analyzeConversations(messages, defaultOptions);
 
-    expect(result.averageResponseTimeMs).toBe(60_000);
+    expect(result.medianResponseTimeMs).toBe(60_000);
   });
 
   it("calculates maximum consecutive messages from one participant", () => {
@@ -318,6 +324,24 @@ describe("analyzeConversations", () => {
     const result = analyzeConversations(messages, defaultOptions);
 
     expect(result.averageDurationMs).toBe(60_000);
-    expect(result.averageResponseTimeMs).toBe(60_000);
+    expect(result.medianResponseTimeMs).toBe(60_000);
+  });
+
+  it("uses the median so one very slow reply does not distort the result", () => {
+    const minute = 60_000;
+
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: 0 }),
+      createMessage({ id: "2", senderId: "user-2", timestamp: 1 * minute }),
+      createMessage({ id: "3", senderId: "user-1", timestamp: 2 * minute }),
+      createMessage({ id: "4", senderId: "user-2", timestamp: 3 * minute }),
+      createMessage({ id: "5", senderId: "user-1", timestamp: 4 * minute }),
+      createMessage({ id: "6", senderId: "user-2", timestamp: 304 * minute })
+    ];
+
+    const result = analyzeConversations(messages, defaultOptions);
+
+    expect(result.medianResponseTimeMs).toBe(1 * minute);
+    expect(result.longestResponseTimeMs).toBe(300 * minute);
   });
 });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { NormalizedMessage } from "../../../normalization";
-import { analyzeOverview } from "./overview-analytics";
 import { DEFAULT_ANALYSIS_OPTIONS } from "../../types";
+import { analyzeOverview } from "./overview-analytics";
 
 function analyze(messages: NormalizedMessage[], timezone = DEFAULT_ANALYSIS_OPTIONS.timezone) {
   return analyzeOverview(messages, { timezone });
@@ -34,7 +34,8 @@ describe("analyzeOverview", () => {
       activeDays: 0,
       averageMessagesPerActiveDay: 0,
       averageWordsPerMessage: 0,
-      averageCharactersPerMessage: 0
+      averageCharactersPerMessage: 0,
+      mediaCounts: []
     });
   });
 
@@ -131,6 +132,21 @@ describe("analyzeOverview", () => {
     expect(result.messagesWithText).toBe(1);
     expect(result.averageWordsPerMessage).toBe(2);
     expect(result.averageCharactersPerMessage).toBe(11);
+  });
+
+  it("counts media messages by type, most frequent first", () => {
+    const result = analyze([
+      createMessage({ id: "1" }),
+      createMessage({ id: "2", type: "video" }),
+      createMessage({ id: "3", type: "photo" }),
+      createMessage({ id: "4", type: "photo" }),
+      createMessage({ id: "5", type: "other" })
+    ]);
+
+    expect(result.mediaCounts).toEqual([
+      { type: "photo", count: 2 },
+      { type: "video", count: 1 }
+    ]);
   });
 
   it("handles a chat with one message", () => {

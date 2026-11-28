@@ -15,6 +15,10 @@ function createParticipant(overrides: Partial<ParticipantStats> = {}): Participa
     nightMessages: 0,
     emojiCount: 0,
     startedConversations: 0,
+    endedConversations: 0,
+    medianResponseTimeMs: 0,
+    responseCount: 0,
+    maxConsecutiveMessages: 0,
     ...overrides
   };
 }
@@ -185,5 +189,82 @@ describe("LocalAchievementsEngine", () => {
     ]);
 
     expect(chatterbox?.unlocked).toBe(false);
+  });
+
+  describe("reply, streak and ending achievements", () => {
+    function findAchievement(id: string, participants: ParticipantStats[]) {
+      return engine
+        .evaluate(createAnalytics({ participants }))
+        .find(achievement => achievement.id === id);
+    }
+
+    it("awards Quick Draw to a clearly faster replier", () => {
+      const quickDraw = findAchievement("quick_draw", [
+        createParticipant({
+          participantId: "user-1",
+          medianResponseTimeMs: 60_000,
+          responseCount: 100
+        }),
+        createParticipant({
+          participantId: "user-2",
+          medianResponseTimeMs: 120_000,
+          responseCount: 100
+        })
+      ]);
+
+      expect(quickDraw?.holderIds).toEqual(["user-1"]);
+    });
+
+    it("does not award Quick Draw when the difference is small", () => {
+      const quickDraw = findAchievement("quick_draw", [
+        createParticipant({
+          participantId: "user-1",
+          medianResponseTimeMs: 60_000,
+          responseCount: 100
+        }),
+        createParticipant({
+          participantId: "user-2",
+          medianResponseTimeMs: 80_000,
+          responseCount: 100
+        })
+      ]);
+
+      expect(quickDraw?.unlocked).toBe(false);
+    });
+
+    it("does not compare reply speed with too few replies", () => {
+      const quickDraw = findAchievement("quick_draw", [
+        createParticipant({
+          participantId: "user-1",
+          medianResponseTimeMs: 1_000,
+          responseCount: 5
+        }),
+        createParticipant({
+          participantId: "user-2",
+          medianResponseTimeMs: 120_000,
+          responseCount: 100
+        })
+      ]);
+
+      expect(quickDraw?.unlocked).toBe(false);
+    });
+
+    it("awards Monologist to the longest streak", () => {
+      const monologist = findAchievement("monologist", [
+        createParticipant({ participantId: "user-1", maxConsecutiveMessages: 30 }),
+        createParticipant({ participantId: "user-2", maxConsecutiveMessages: 10 })
+      ]);
+
+      expect(monologist?.holderIds).toEqual(["user-1"]);
+    });
+
+    it("awards Last Word to who ends more conversations", () => {
+      const lastWord = findAchievement("last_word", [
+        createParticipant({ participantId: "user-1", endedConversations: 30 }),
+        createParticipant({ participantId: "user-2", endedConversations: 90 })
+      ]);
+
+      expect(lastWord?.holderIds).toEqual(["user-2"]);
+    });
   });
 });

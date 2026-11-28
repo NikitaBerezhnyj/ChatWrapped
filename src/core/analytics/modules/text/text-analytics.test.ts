@@ -307,4 +307,21 @@ describe("analyzeText", () => {
 
     expect(result.mostFrequentPhrases).toEqual([{ phrase: "one two", count: 1 }]);
   });
+
+  it("ignores short words by default but keeps meaningful ones", () => {
+    const messages = [
+      createMessage("я не знаю що це"),
+      createMessage("люблю тебе"),
+      createMessage("люблю дуже"),
+      createMessage("to be or not to be, love")
+    ];
+
+    const words = analyze(messages).mostFrequentWords.map(entry => entry.word);
+
+    expect(words).toContain("люблю");
+    expect(words).toContain("love");
+    expect(words).not.toContain("не");
+    expect(words).not.toContain("що");
+    expect(words).not.toContain("to");
+  });
 });

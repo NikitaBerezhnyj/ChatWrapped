@@ -137,7 +137,9 @@ function countMessagePhrases(tokens: string[], phraseCounts: Map<string, number>
 }
 
 function getMostRepeatedMessage(messages: NormalizedMessage[]): TextStats["mostRepeatedMessage"] {
-  const textMessages = messages.filter(message => message.normalizedText.length > 0);
+  const textMessages = messages.filter(
+    message => message.tokens.length > 0 || message.emojis.length > 0
+  );
 
   if (textMessages.length === 0) {
     return null;

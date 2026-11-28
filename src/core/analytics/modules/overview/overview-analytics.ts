@@ -1,12 +1,26 @@
 import { format } from "date-fns";
 import type { NormalizedMessage } from "../../../normalization";
-import type { AnalysisOptions, OverviewStats } from "../../types";
 import { getZonedDate } from "../../time";
+import type { AnalysisOptions, OverviewStats } from "../../types";
 
 function getActiveDays(messages: NormalizedMessage[], timezone: string): Set<string> {
   return new Set(
     messages.map(message => format(getZonedDate(message.timestamp, timezone), "yyyy-MM-dd"))
   );
+}
+
+function getMediaCounts(messages: NormalizedMessage[]): OverviewStats["mediaCounts"] {
+  const counts = new Map<OverviewStats["mediaCounts"][number]["type"], number>();
+
+  for (const { type } of messages) {
+    if (type !== "text" && type !== "other") {
+      counts.set(type, (counts.get(type) ?? 0) + 1);
+    }
+  }
+
+  return [...counts]
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count || a.type.localeCompare(b.type));
 }
 
 export function analyzeOverview(
@@ -23,7 +37,8 @@ export function analyzeOverview(
       activeDays: 0,
       averageMessagesPerActiveDay: 0,
       averageWordsPerMessage: 0,
-      averageCharactersPerMessage: 0
+      averageCharactersPerMessage: 0,
+      mediaCounts: []
     };
   }
 
@@ -64,6 +79,8 @@ export function analyzeOverview(
 
     averageWordsPerMessage: totalWords / (messagesWithText.length || 1),
 
-    averageCharactersPerMessage: totalCharacters / (messagesWithText.length || 1)
+    averageCharactersPerMessage: totalCharacters / (messagesWithText.length || 1),
+
+    mediaCounts: getMediaCounts(messages)
   };
 }

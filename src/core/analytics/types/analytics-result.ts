@@ -1,3 +1,5 @@
+import type { MessageType } from "../../models";
+
 export interface OverviewStats {
   totalMessages: number;
   totalWords: number;
@@ -10,6 +12,11 @@ export interface OverviewStats {
   averageMessagesPerActiveDay: number;
   averageWordsPerMessage: number;
   averageCharactersPerMessage: number;
+
+  mediaCounts: Array<{
+    type: Exclude<MessageType, "text" | "other">;
+    count: number;
+  }>;
 }
 
 export interface ActivityStats {
@@ -106,6 +113,17 @@ export interface ParticipantStats {
   emojiCount: number;
 
   startedConversations: number;
+  endedConversations: number;
+
+  medianResponseTimeMs: number;
+  responseCount: number;
+
+  maxConsecutiveMessages: number;
+
+  distinctiveWords: Array<{
+    word: string;
+    count: number;
+  }>;
 }
 
 export interface ConversationStats {
@@ -113,9 +131,16 @@ export interface ConversationStats {
   averageDurationMs: number;
   longestDurationMs: number;
 
-  averageResponseTimeMs: number;
+  medianResponseTimeMs: number;
   fastestResponseTimeMs: number;
   longestResponseTimeMs: number;
+
+  responseTimeShares: {
+    underOneMinute: number;
+    oneToFiveMinutes: number;
+    fiveToSixtyMinutes: number;
+    overOneHour: number;
+  };
 
   maxConsecutiveMessages: number;
 }

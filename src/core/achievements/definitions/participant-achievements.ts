@@ -2,6 +2,7 @@ import type { ParticipantStats } from "../../analytics";
 import type { ParticipantAchievementDefinition } from "../types";
 
 const LEAD_RATIO = 1.5;
+const MINIMUM_REPLIES = 50;
 
 function leadsBy(
   selectValue: (participant: ParticipantStats) => number,
@@ -23,6 +24,23 @@ function leadsBy(
     );
 
     return selectValue(participant) > 0 && selectValue(participant) >= runnerUp * LEAD_RATIO;
+  };
+}
+
+function leadsByLowest(
+  selectValue: (participant: ParticipantStats) => number,
+  hasEnoughData: (participant: ParticipantStats) => boolean
+): ParticipantAchievementDefinition["condition"] {
+  return (participant, participants) => {
+    const candidates = participants.filter(hasEnoughData);
+
+    if (candidates.length < 2 || !candidates.includes(participant)) {
+      return false;
+    }
+
+    const runnerUp = Math.min(...candidates.filter(item => item !== participant).map(selectValue));
+
+    return selectValue(participant) > 0 && selectValue(participant) * LEAD_RATIO <= runnerUp;
   };
 }
 
@@ -71,5 +89,35 @@ export const participantAchievements: ParticipantAchievementDefinition[] = [
     description: "Used 50% more emojis than any other participant.",
     icon: "smile",
     condition: leadsBy(participant => participant.emojiCount, 200)
+  },
+  {
+    id: "quick_draw",
+    scope: "participant",
+    category: "activity",
+    title: "Quick Draw",
+    description: "Replied 1.5× faster than any other participant.",
+    icon: "zap",
+    condition: leadsByLowest(
+      participant => participant.medianResponseTimeMs,
+      participant => participant.responseCount >= MINIMUM_REPLIES
+    )
+  },
+  {
+    id: "monologist",
+    scope: "participant",
+    category: "activity",
+    title: "Monologist",
+    description: "Sent 50% more messages in a row than any other participant.",
+    icon: "mic",
+    condition: leadsBy(participant => participant.maxConsecutiveMessages, 20)
+  },
+  {
+    id: "last_word",
+    scope: "participant",
+    category: "activity",
+    title: "Last Word",
+    description: "Ended 50% more conversations than any other participant.",
+    icon: "flag",
+    condition: leadsBy(participant => participant.endedConversations, 50)
   }
 ];

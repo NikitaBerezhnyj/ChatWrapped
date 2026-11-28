@@ -71,7 +71,7 @@ describe("LocalAnalyticsEngine", () => {
     const result = await engine.analyze(createChat());
 
     expect(result.conversations.totalConversations).toBe(1);
-    expect(result.conversations.averageResponseTimeMs).toBe(1_000);
+    expect(result.conversations.medianResponseTimeMs).toBe(1_000);
   });
 
   it("uses default options when none are provided", async () => {

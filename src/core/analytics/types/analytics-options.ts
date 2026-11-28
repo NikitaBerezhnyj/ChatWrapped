@@ -18,6 +18,6 @@ export const DEFAULT_ANALYSIS_OPTIONS: AnalysisOptions = {
   topPhrasesLimit: 10,
   minimumPhraseCount: 2,
   topEmojisLimit: 10,
-  minimumWordLength: 2,
+  minimumWordLength: 4,
   timezone: "UTC"
 };

@@ -1,53 +1,11 @@
 import type { NormalizedMessage } from "../../../normalization";
-import type { ConversationStats } from "../../types";
-import type { AnalysisOptions } from "../../types";
+import { splitConversations, type Conversation } from "../../conversations";
+import { getMedian } from "../../statistics";
+import type { AnalysisOptions, ConversationStats } from "../../types";
 
-interface Conversation {
-  messages: NormalizedMessage[];
-  startTimestamp: number;
-  endTimestamp: number;
-}
+const MINUTE_MS = 60_000;
 
-function splitConversations(messages: NormalizedMessage[], thresholdMs: number): Conversation[] {
-  if (messages.length === 0) {
-    return [];
-  }
-
-  const sortedMessages = [...messages].sort((a, b) => a.timestamp - b.timestamp);
-
-  const conversations: Conversation[] = [];
-  let currentMessages: NormalizedMessage[] = [sortedMessages[0]];
-
-  for (let index = 1; index < sortedMessages.length; index += 1) {
-    const message = sortedMessages[index];
-    const previousMessage = sortedMessages[index - 1];
-
-    const gap = message.timestamp - previousMessage.timestamp;
-
-    if (gap > thresholdMs) {
-      conversations.push({
-        messages: currentMessages,
-        startTimestamp: currentMessages[0].timestamp,
-        endTimestamp: currentMessages[currentMessages.length - 1].timestamp
-      });
-
-      currentMessages = [message];
-      continue;
-    }
-
-    currentMessages.push(message);
-  }
-
-  conversations.push({
-    messages: currentMessages,
-    startTimestamp: currentMessages[0].timestamp,
-    endTimestamp: currentMessages[currentMessages.length - 1].timestamp
-  });
-
-  return conversations;
-}
-
-function getResponseTimes(conversations: Conversation[]): number[] {
+function getResponseTimes(conversations: Conversation<NormalizedMessage>[]): number[] {
   const responseTimes: number[] = [];
 
   for (const conversation of conversations) {
@@ -68,7 +26,26 @@ function getResponseTimes(conversations: Conversation[]): number[] {
   return responseTimes;
 }
 
-function getMaxConsecutiveMessages(conversations: Conversation[]): number {
+function getResponseTimeShares(responseTimes: number[]): ConversationStats["responseTimeShares"] {
+  function getShare(fromMs: number, toMs: number): number {
+    if (responseTimes.length === 0) {
+      return 0;
+    }
+
+    const matching = responseTimes.filter(time => time >= fromMs && time < toMs);
+
+    return matching.length / responseTimes.length;
+  }
+
+  return {
+    underOneMinute: getShare(0, MINUTE_MS),
+    oneToFiveMinutes: getShare(MINUTE_MS, 5 * MINUTE_MS),
+    fiveToSixtyMinutes: getShare(5 * MINUTE_MS, 60 * MINUTE_MS),
+    overOneHour: getShare(60 * MINUTE_MS, Infinity)
+  };
+}
+
+function getMaxConsecutiveMessages(conversations: Conversation<NormalizedMessage>[]): number {
   let maximum = 0;
 
   for (const conversation of conversations) {
@@ -107,9 +84,10 @@ export function analyzeConversations(
       totalConversations: 0,
       averageDurationMs: 0,
       longestDurationMs: 0,
-      averageResponseTimeMs: 0,
+      medianResponseTimeMs: 0,
       fastestResponseTimeMs: 0,
       longestResponseTimeMs: 0,
+      responseTimeShares: getResponseTimeShares([]),
       maxConsecutiveMessages: 0
     };
   }
@@ -122,15 +100,20 @@ export function analyzeConversations(
 
   const totalDuration = durations.reduce((total, duration) => total + duration, 0);
 
-  const totalResponseTime = responseTimes.reduce((total, responseTime) => total + responseTime, 0);
-
   return {
     totalConversations: conversations.length,
     averageDurationMs: totalDuration / conversations.length,
-    longestDurationMs: Math.max(...durations),
-    averageResponseTimeMs: responseTimes.length > 0 ? totalResponseTime / responseTimes.length : 0,
-    fastestResponseTimeMs: responseTimes.length > 0 ? Math.min(...responseTimes) : 0,
-    longestResponseTimeMs: responseTimes.length > 0 ? Math.max(...responseTimes) : 0,
+    longestDurationMs: durations.reduce((longest, duration) => Math.max(longest, duration)),
+    medianResponseTimeMs: getMedian(responseTimes),
+    fastestResponseTimeMs:
+      responseTimes.length > 0
+        ? responseTimes.reduce((fastest, time) => Math.min(fastest, time))
+        : 0,
+    longestResponseTimeMs:
+      responseTimes.length > 0
+        ? responseTimes.reduce((longest, time) => Math.max(longest, time))
+        : 0,
+    responseTimeShares: getResponseTimeShares(responseTimes),
     maxConsecutiveMessages: getMaxConsecutiveMessages(conversations)
   };
 }

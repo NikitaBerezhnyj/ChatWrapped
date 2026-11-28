@@ -1,6 +1,13 @@
 import type { NormalizedMessage } from "../../../normalization";
+import { splitConversations } from "../../conversations";
+import { getMedian } from "../../statistics";
 import { getZonedDate } from "../../time";
 import type { ParticipantStats } from "../../types";
+import { getDistinctiveWords } from "../text/distinctive-words";
+
+const DISTINCTIVE_WORDS_LIMIT = 5;
+
+type SenderMessage = NormalizedMessage & { senderId: string };
 
 interface ParticipantAccumulator {
   messageCount: number;
@@ -9,6 +16,13 @@ interface ParticipantAccumulator {
   nightMessages: number;
   emojiCount: number;
   startedConversations: number;
+  endedConversations: number;
+  maxConsecutiveMessages: number;
+  responseTimes: number[];
+}
+
+function hasSender(message: NormalizedMessage): message is SenderMessage {
+  return message.senderId !== null;
 }
 
 function isNightHour(hour: number, nightStartHour: number, nightEndHour: number): boolean {
@@ -26,8 +40,41 @@ function createAccumulator(): ParticipantAccumulator {
     characterCount: 0,
     nightMessages: 0,
     emojiCount: 0,
-    startedConversations: 0
+    startedConversations: 0,
+    endedConversations: 0,
+    maxConsecutiveMessages: 0,
+    responseTimes: []
   };
+}
+
+function updateConversationStats(
+  messages: SenderMessage[],
+  participants: Map<string, ParticipantAccumulator>
+): void {
+  const first = messages[0];
+  const last = messages[messages.length - 1];
+
+  participants.get(first.senderId)!.startedConversations += 1;
+
+  if (messages.length >= 2) {
+    participants.get(last.senderId)!.endedConversations += 1;
+  }
+
+  let previous: SenderMessage | null = null;
+  let streak = 0;
+
+  for (const message of messages) {
+    const accumulator = participants.get(message.senderId)!;
+
+    if (previous && previous.senderId !== message.senderId) {
+      accumulator.responseTimes.push(message.timestamp - previous.timestamp);
+    }
+
+    streak = previous?.senderId === message.senderId ? streak + 1 : 1;
+    accumulator.maxConsecutiveMessages = Math.max(accumulator.maxConsecutiveMessages, streak);
+
+    previous = message;
+  }
 }
 
 export function analyzeParticipants(
@@ -37,19 +84,18 @@ export function analyzeParticipants(
     nightStartHour: number;
     nightEndHour: number;
     timezone: string;
+    minimumWordLength: number;
   }
 ): ParticipantStats[] {
-  if (messages.length === 0) {
+  const senderMessages = messages.filter(hasSender);
+
+  if (senderMessages.length === 0) {
     return [];
   }
 
   const participants = new Map<string, ParticipantAccumulator>();
 
-  for (const message of messages) {
-    if (message.senderId === null) {
-      continue;
-    }
-
+  for (const message of senderMessages) {
     const accumulator = participants.get(message.senderId) ?? createAccumulator();
 
     accumulator.messageCount += 1;
@@ -66,26 +112,11 @@ export function analyzeParticipants(
     participants.set(message.senderId, accumulator);
   }
 
-  const sortedMessages = [...messages]
-    .filter(message => message.senderId !== null)
-    .sort((a, b) => a.timestamp - b.timestamp);
-
-  for (let index = 0; index < sortedMessages.length; index += 1) {
-    const message = sortedMessages[index];
-
-    const previousMessage = sortedMessages[index - 1];
-
-    const startsConversation =
-      index === 0 ||
-      message.timestamp - previousMessage.timestamp > options.conversationGapThresholdMs;
-
-    if (startsConversation && message.senderId !== null) {
-      const accumulator = participants.get(message.senderId);
-
-      if (accumulator) {
-        accumulator.startedConversations += 1;
-      }
-    }
+  for (const conversation of splitConversations(
+    senderMessages,
+    options.conversationGapThresholdMs
+  )) {
+    updateConversationStats(conversation.messages, participants);
   }
 
   const totalMessages = [...participants.values()].reduce(
@@ -97,6 +128,8 @@ export function analyzeParticipants(
     (total, participant) => total + participant.wordCount,
     0
   );
+
+  const distinctiveWords = getDistinctiveWords(senderMessages, options, DISTINCTIVE_WORDS_LIMIT);
 
   return [...participants.entries()]
     .map(([participantId, participant]) => ({
@@ -110,7 +143,12 @@ export function analyzeParticipants(
         participant.messageCount > 0 ? participant.characterCount / participant.messageCount : 0,
       nightMessages: participant.nightMessages,
       emojiCount: participant.emojiCount,
-      startedConversations: participant.startedConversations
+      startedConversations: participant.startedConversations,
+      endedConversations: participant.endedConversations,
+      medianResponseTimeMs: getMedian(participant.responseTimes),
+      responseCount: participant.responseTimes.length,
+      maxConsecutiveMessages: participant.maxConsecutiveMessages,
+      distinctiveWords: distinctiveWords.get(participantId) ?? []
     }))
     .sort((a, b) => {
       if (b.messageCount !== a.messageCount) {

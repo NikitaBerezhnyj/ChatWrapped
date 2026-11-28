@@ -22,7 +22,8 @@ const defaultOptions = {
   conversationGapThresholdMs: 8 * 60 * 60 * 1000,
   nightStartHour: 0,
   nightEndHour: 6,
-  timezone: "UTC"
+  timezone: "UTC",
+  minimumWordLength: 4
 };
 
 describe("analyzeParticipants", () => {
@@ -303,5 +304,114 @@ describe("analyzeParticipants", () => {
 
     expect(utc[0].nightMessages).toBe(0);
     expect(kyiv[0].nightMessages).toBe(1);
+  });
+});
+
+describe("replies, streaks and endings", () => {
+  const minute = 60_000;
+  const hour = 60 * minute;
+
+  it("calculates the median response time per participant", () => {
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: 0 }),
+      createMessage({ id: "2", senderId: "user-2", timestamp: 1 * minute }),
+      createMessage({ id: "3", senderId: "user-1", timestamp: 3 * minute }),
+      createMessage({ id: "4", senderId: "user-2", timestamp: 4 * minute }),
+      createMessage({ id: "5", senderId: "user-1", timestamp: 14 * minute }),
+      createMessage({ id: "6", senderId: "user-2", timestamp: 24 * minute })
+    ];
+
+    const result = analyzeParticipants(messages, defaultOptions);
+
+    const user1 = result.find(item => item.participantId === "user-1");
+    const user2 = result.find(item => item.participantId === "user-2");
+
+    expect(user1?.medianResponseTimeMs).toBe(6 * minute);
+    expect(user1?.responseCount).toBe(2);
+    expect(user2?.medianResponseTimeMs).toBe(1 * minute);
+    expect(user2?.responseCount).toBe(3);
+  });
+
+  it("measures a reply from the last message of the other participant", () => {
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: 0 }),
+      createMessage({ id: "2", senderId: "user-1", timestamp: 1 * minute }),
+      createMessage({ id: "3", senderId: "user-2", timestamp: 2 * minute })
+    ];
+
+    const result = analyzeParticipants(messages, defaultOptions);
+
+    expect(result.find(item => item.participantId === "user-2")?.medianResponseTimeMs).toBe(
+      1 * minute
+    );
+    expect(result.find(item => item.participantId === "user-1")?.responseCount).toBe(0);
+    expect(result.find(item => item.participantId === "user-1")?.medianResponseTimeMs).toBe(0);
+  });
+
+  it("does not count a reply across conversations", () => {
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: 0 }),
+      createMessage({
+        id: "2",
+        senderId: "user-2",
+        timestamp: defaultOptions.conversationGapThresholdMs + 1
+      })
+    ];
+
+    const result = analyzeParticipants(messages, defaultOptions);
+
+    expect(result.every(item => item.responseCount === 0)).toBe(true);
+  });
+
+  it("finds the longest streak of messages in a row", () => {
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: 0 }),
+      createMessage({ id: "2", senderId: "user-1", timestamp: 1 * minute }),
+      createMessage({ id: "3", senderId: "user-1", timestamp: 2 * minute }),
+      createMessage({ id: "4", senderId: "user-2", timestamp: 3 * minute }),
+      createMessage({ id: "5", senderId: "user-1", timestamp: 4 * minute }),
+      createMessage({ id: "6", senderId: "user-1", timestamp: 5 * minute })
+    ];
+
+    const result = analyzeParticipants(messages, defaultOptions);
+
+    expect(result.find(item => item.participantId === "user-1")?.maxConsecutiveMessages).toBe(3);
+    expect(result.find(item => item.participantId === "user-2")?.maxConsecutiveMessages).toBe(1);
+  });
+
+  it("does not continue a streak across conversations", () => {
+    const gap = defaultOptions.conversationGapThresholdMs;
+
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: 0 }),
+      createMessage({ id: "2", senderId: "user-1", timestamp: 1 * minute }),
+      createMessage({ id: "3", senderId: "user-1", timestamp: gap + 2 * minute }),
+      createMessage({ id: "4", senderId: "user-1", timestamp: gap + 3 * minute })
+    ];
+
+    const result = analyzeParticipants(messages, defaultOptions);
+
+    expect(result[0].maxConsecutiveMessages).toBe(2);
+  });
+
+  it("counts conversations ended by each participant", () => {
+    const first = 0;
+    const second = 10 * hour;
+    const third = 20 * hour;
+
+    const messages = [
+      createMessage({ id: "1", senderId: "user-1", timestamp: first }),
+      createMessage({ id: "2", senderId: "user-2", timestamp: first + minute }),
+      createMessage({ id: "3", senderId: "user-1", timestamp: first + 2 * minute }),
+      createMessage({ id: "4", senderId: "user-2", timestamp: second }),
+      createMessage({ id: "5", senderId: "user-1", timestamp: second + minute }),
+      createMessage({ id: "6", senderId: "user-2", timestamp: second + 2 * minute }),
+      createMessage({ id: "7", senderId: "user-1", timestamp: third })
+    ];
+
+    const result = analyzeParticipants(messages, defaultOptions);
+
+    expect(result.find(item => item.participantId === "user-1")?.endedConversations).toBe(1);
+    expect(result.find(item => item.participantId === "user-2")?.endedConversations).toBe(1);
   });
 });
