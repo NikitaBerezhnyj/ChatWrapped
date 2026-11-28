@@ -2,6 +2,7 @@ import type { Message, MessageType } from "../models";
 import { extractEmojis } from "./extract-emojis";
 import { normalizeText } from "./normalize-text";
 import { removeLinks } from "./remove-links";
+import { removeMentions } from "./remove-mentions";
 import { tokenize } from "./tokenize";
 
 export interface NormalizedMessage {
@@ -24,7 +25,7 @@ export function normalizeMessage(message: Message): NormalizedMessage {
   const originalText = message.text;
   const normalizedText = originalText ? normalizeText(originalText) : "";
 
-  const tokens = originalText ? tokenize(removeLinks(originalText)) : [];
+  const tokens = originalText ? tokenize(removeMentions(removeLinks(originalText))) : [];
 
   const emojis = originalText ? extractEmojis(originalText) : [];
 
