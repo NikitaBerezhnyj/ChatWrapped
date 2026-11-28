@@ -55,8 +55,16 @@
   color: var(--color-accent);
 }
 
-.importButton {
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   margin-top: 35px;
+}
+
+.actions>button {
+  flex: 1 1 240px;
+  max-width: 340px;
 }
 
 .importStatus {
@@ -205,8 +213,8 @@
     text-align: center;
   }
 
-  .importButton {
-    margin-inline: auto;
+  .actions {
+    justify-content: center;
   }
 
   .privacyNote {

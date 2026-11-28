@@ -1,0 +1,32 @@
+.picker {
+    min-width: 0;
+    margin: 28px 0 0;
+    padding: 0;
+    border: 0;
+}
+
+.legend {
+    margin-bottom: 12px;
+    padding: 0;
+    color: var(--color-subtle);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+}
+
+.controls {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.select {
+    width: 100%;
+    padding: 14px 16px;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: 15px;
+    cursor: pointer;
+}

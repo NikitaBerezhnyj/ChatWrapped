@@ -3,23 +3,28 @@ import { useMemo, useState, type FormEvent } from "react";
 import { Button } from "../components/Button";
 import { Page } from "../components/Page";
 import { PageIntro } from "../components/PageIntro";
+import { PeriodPicker } from "../components/PeriodPicker";
 import { ThemePicker } from "../components/ThemePicker";
+import type { ChatData } from "../core/models";
+import { getAvailablePeriods, type Period } from "../core/period";
 import {
+  DEFAULT_PRESENTATION_FORMATTING_OPTIONS,
   getAnonymousNames,
   getDefaultNames,
   getParticipantList,
   MAX_NAME_LENGTH,
-  type PresentationData,
   type PresentationNames
 } from "../core/presentation";
 import type { ThemeId } from "../themes/themes";
 import styles from "./CustomizePage.module.css";
 
 interface CustomizePageProps {
-  data: PresentationData;
+  chat: ChatData;
   theme: ThemeId;
+  isLoading: boolean;
+  error: string | null;
   onThemeChange: (theme: ThemeId) => void;
-  onStart: (names: PresentationNames, hideTextSlides: boolean) => void;
+  onStart: (names: PresentationNames, hideTextSlides: boolean, period: Period) => void;
   onBack: () => void;
 }
 
@@ -46,12 +51,25 @@ function NameField({ label, value, placeholder, onChange }: NameFieldProps) {
   );
 }
 
-function CustomizePage({ data, theme, onThemeChange, onStart, onBack }: CustomizePageProps) {
-  const defaults = useMemo(() => getDefaultNames(data), [data]);
-  const participants = useMemo(() => getParticipantList(data), [data]);
+function CustomizePage({
+  chat,
+  theme,
+  isLoading,
+  error,
+  onThemeChange,
+  onStart,
+  onBack
+}: CustomizePageProps) {
+  const defaults = useMemo(() => getDefaultNames(chat), [chat]);
+  const participants = useMemo(() => getParticipantList(chat), [chat]);
+  const periods = useMemo(
+    () => getAvailablePeriods(chat, DEFAULT_PRESENTATION_FORMATTING_OPTIONS.timezone),
+    [chat]
+  );
 
   const [names, setNames] = useState<PresentationNames>(defaults);
   const [hideTextSlides, setHideTextSlides] = useState(false);
+  const [period, setPeriod] = useState<Period>(null);
 
   function setChatTitle(chatTitle: string) {
     setNames(current => ({ ...current, chatTitle }));
@@ -66,13 +84,13 @@ function CustomizePage({ data, theme, onThemeChange, onStart, onBack }: Customiz
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onStart(names, hideTextSlides);
+    onStart(names, hideTextSlides, period);
   }
 
   return (
     <Page>
       <div className={styles.content}>
-        <button className={styles.back} type="button" onClick={onBack}>
+        <button className={styles.back} type="button" onClick={onBack} disabled={isLoading}>
           <ArrowLeft width={14} aria-hidden="true" />
           BACK
         </button>
@@ -88,7 +106,7 @@ function CustomizePage({ data, theme, onThemeChange, onStart, onBack }: Customiz
             <button
               className={styles.textButton}
               type="button"
-              onClick={() => setNames(getAnonymousNames(data))}
+              onClick={() => setNames(getAnonymousNames(chat))}
             >
               ANONYMIZE
             </button>
@@ -119,9 +137,9 @@ function CustomizePage({ data, theme, onThemeChange, onStart, onBack }: Customiz
 
           <p className={styles.note}>An empty field keeps the original name.</p>
 
-          <ThemePicker value={theme} onChange={onThemeChange} />
+          <PeriodPicker periods={periods} value={period} onChange={setPeriod} />
 
-          <label className={styles.checkbox}></label>
+          <ThemePicker value={theme} onChange={onThemeChange} />
 
           <label className={styles.checkbox}>
             <input
@@ -138,9 +156,15 @@ function CustomizePage({ data, theme, onThemeChange, onStart, onBack }: Customiz
             </span>
           </label>
 
-          <Button className={styles.startButton} type="submit">
-            <span>START STORY</span>
-            <ArrowUpRight width={19} aria-hidden="true" />
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
+
+          <Button className={styles.startButton} type="submit" disabled={isLoading}>
+            <span>{isLoading ? "ANALYZING..." : "START STORY"}</span>
+            {!isLoading && <ArrowUpRight width={19} aria-hidden="true" />}
           </Button>
         </form>
       </div>
