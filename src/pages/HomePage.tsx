@@ -1,6 +1,7 @@
-import { ArrowUpRight } from "lucide-react";
-import { useRef, type ChangeEvent } from "react";
+import { ArrowUpRight, CircleHelp } from "lucide-react";
+import { useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../components/Button";
+import { ExportGuideModal } from "../components/ExportGuideModal";
 import { Page } from "../components/Page";
 import { PageIntro } from "../components/PageIntro";
 import styles from "./HomePage.module.css";
@@ -13,6 +14,7 @@ interface HomePageProps {
 
 function HomePage({ isLoading, error, onImport }: HomePageProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
@@ -24,92 +26,99 @@ function HomePage({ isLoading, error, onImport }: HomePageProps) {
   }
 
   return (
-    <Page>
-      <header className={styles.header}>
-        <a className={styles.brand} href="./">
-          <span className={styles.brandSymbol}>cw.</span>
-          <span>CHAT WRAPPED</span>
-        </a>
+    <>
+      <Page>
+        <header className={styles.header}>
+          <a className={styles.brand} href="./">
+            <span className={styles.brandSymbol}>cw.</span>
+            <span>CHAT WRAPPED</span>
+          </a>
 
-        <span className={styles.headerLabel}>YOUR CHAT IN NUMBERS</span>
-      </header>
+          <span className={styles.headerLabel}>YOUR CHAT IN NUMBERS</span>
+        </header>
 
-      <section className={styles.hero}>
-        <div className={styles.heroContent}>
-          <PageIntro
-            size="hero"
-            eyebrow="A NEW WAY TO LOOK BACK"
-            title={
-              <>
-                Your conversations.
-                <br />
-                <span className={styles.heroTitleAccent}>Your story.</span>
-              </>
-            }
-            description="The little moments, the big numbers, the words you kept repeating. See your conversation from a different perspective."
-          />
+        <section className={styles.hero}>
+          <div className={styles.heroContent}>
+            <PageIntro
+              size="hero"
+              eyebrow="A NEW WAY TO LOOK BACK"
+              title={
+                <>
+                  Your conversations.
+                  <br />
+                  <span className={styles.heroTitleAccent}>Your story.</span>
+                </>
+              }
+              description="The little moments, the big numbers, the words you kept repeating. See your conversation from a different perspective."
+            />
 
-          <input
-            ref={inputRef}
-            type="file"
-            accept=".json,application/json"
-            hidden
-            onChange={handleFileChange}
-          />
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".json,application/json"
+              hidden
+              onChange={handleFileChange}
+            />
 
-          <Button
-            className={styles.importButton}
-            disabled={isLoading}
-            onClick={() => inputRef.current?.click()}
-          >
-            <span>{isLoading ? "ANALYZING..." : "IMPORT TELEGRAM EXPORT"}</span>
-            {!isLoading && <ArrowUpRight width={19} aria-hidden="true" />}
-          </Button>
+            <div className={styles.actions}>
+              <Button disabled={isLoading} onClick={() => inputRef.current?.click()}>
+                <span>{isLoading ? "ANALYZING..." : "IMPORT TELEGRAM EXPORT"}</span>
+                {!isLoading && <ArrowUpRight width={19} aria-hidden="true" />}
+              </Button>
 
-          {isLoading && (
-            <p className={styles.importStatus} role="status">
-              Processing your conversation locally...
-            </p>
-          )}
-
-          {error && (
-            <div className={styles.importError} role="alert">
-              <strong>Something went wrong</strong>
-              <p>{error}</p>
+              <Button variant="outline" onClick={() => setIsGuideOpen(true)}>
+                <span>HOW IT WORKS?</span>
+                <CircleHelp width={19} aria-hidden="true" />
+              </Button>
             </div>
-          )}
 
-          <div className={styles.privacyNote}>
-            <span className={styles.privacyDot} />
-            YOUR DATA STAYS IN YOUR BROWSER
-          </div>
-        </div>
+            {isLoading && (
+              <p className={styles.importStatus} role="status">
+                Processing your conversation locally...
+              </p>
+            )}
 
-        <div className={styles.preview} aria-hidden="true">
-          <div className={`${styles.previewCard} ${styles.previewCardBack}`}>
-            <span>YOUR WORDS</span>
-            <strong>hello!</strong>
-            <strong>always</strong>
-            <strong>haha</strong>
-          </div>
+            {error && (
+              <div className={styles.importError} role="alert">
+                <strong>Something went wrong</strong>
+                <p>{error}</p>
+              </div>
+            )}
 
-          <div className={`${styles.previewCard} ${styles.previewCardFront}`}>
-            <span>YOUR CONVERSATION</span>
-            <strong>∞</strong>
-            <small>MESSAGES & MEMORIES</small>
+            <div className={styles.privacyNote}>
+              <span className={styles.privacyDot} />
+              YOUR DATA STAYS IN YOUR BROWSER
+            </div>
           </div>
 
-          <span className={`${styles.previewStar} ${styles.previewStarOne}`}>✳</span>
+          <div className={styles.preview} aria-hidden="true">
+            <div className={`${styles.previewCard} ${styles.previewCardBack}`}>
+              <span>YOUR WORDS</span>
+              <strong>hello!</strong>
+              <strong>always</strong>
+              <strong>haha</strong>
+            </div>
 
-          <span className={`${styles.previewStar} ${styles.previewStarTwo}`}>✳</span>
-        </div>
-      </section>
+            <div className={`${styles.previewCard} ${styles.previewCardFront}`}>
+              <span>YOUR CONVERSATION</span>
+              <strong>∞</strong>
+              <small>MESSAGES & MEMORIES</small>
+            </div>
 
-      <footer className={styles.footer}>
-        <span>CHAT WRAPPED</span>
-        <span>MADE OF MESSAGES.</span>
-      </footer>
-    </Page>
+            <span className={`${styles.previewStar} ${styles.previewStarOne}`}>✳</span>
+
+            <span className={`${styles.previewStar} ${styles.previewStarTwo}`}>✳</span>
+          </div>
+        </section>
+
+        <footer className={styles.footer}>
+          <span>CHAT WRAPPED</span>
+          <span>MADE OF MESSAGES.</span>
+        </footer>
+      </Page>
+
+      {isGuideOpen && <ExportGuideModal onClose={() => setIsGuideOpen(false)} />}
+    </>
   );
 }
 

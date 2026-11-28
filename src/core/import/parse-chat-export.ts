@@ -1,8 +1,7 @@
+import type { ChatData } from "../models";
 import { TelegramParser } from "../parsers/telegram";
-import { LocalPresentationService, type PresentationData } from "../presentation";
 
 const parser = new TelegramParser();
-const presentationService = new LocalPresentationService();
 
 function parseJson(text: string): unknown {
   try {
@@ -14,14 +13,12 @@ function parseJson(text: string): unknown {
   }
 }
 
-export async function processChatExport(text: string): Promise<PresentationData> {
+export function parseChatExport(text: string): ChatData {
   const chat = parser.parse(parseJson(text));
 
   if (chat.messages.length === 0) {
     throw new Error("This chat has no messages to analyze.");
   }
 
-  const { data } = await presentationService.prepare(chat);
-
-  return data;
+  return chat;
 }

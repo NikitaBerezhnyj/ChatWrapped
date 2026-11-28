@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { StoryErrorBoundary } from "./components/StoryErrorBoundary";
+import type { ChatData } from "./core/models";
+import type { Period } from "./core/period";
 import {
   applyNames,
   hideMessageTextSlides,
@@ -7,25 +9,25 @@ import {
   type PresentationNames
 } from "./core/presentation";
 import { useTheme } from "./hooks/useTheme";
-import { importChat } from "./lib/import-chat";
+import { buildPresentation, importChat } from "./lib/chat-worker";
 import CustomizePage from "./pages/CustomizePage";
 import HomePage from "./pages/HomePage";
 import StoryPage from "./pages/StoryPage";
 
 function App() {
-  const [imported, setImported] = useState<PreparedPresentation | null>(null);
+  const [chat, setChat] = useState<ChatData | null>(null);
   const [presentation, setPresentation] = useState<PreparedPresentation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [theme, setTheme] = useTheme();
 
-  async function handleImport(file: File) {
+  async function runTask(task: () => Promise<void>) {
     setIsLoading(true);
     setError(null);
 
     try {
-      setImported(await importChat(file));
+      await task();
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Unable to process this file.");
     } finally {
@@ -33,26 +35,34 @@ function App() {
     }
   }
 
-  function handleStartStory(names: PresentationNames, hideTextSlides: boolean) {
-    if (!imported) {
+  function handleImport(file: File) {
+    runTask(async () => setChat(await importChat(file)));
+  }
+
+  function handleStartStory(names: PresentationNames, hideTextSlides: boolean, period: Period) {
+    if (!chat) {
       return;
     }
 
-    const namedData = applyNames(imported.data, names);
+    runTask(async () => {
+      const prepared = await buildPresentation(chat, period);
+      const namedData = applyNames(prepared.data, names);
 
-    setPresentation({
-      ...imported,
-      data: hideTextSlides ? hideMessageTextSlides(namedData) : namedData
+      setPresentation({
+        ...prepared,
+        data: hideTextSlides ? hideMessageTextSlides(namedData) : namedData
+      });
     });
   }
 
   function handleBack() {
-    setImported(null);
+    setChat(null);
+    setError(null);
   }
 
   function handleCloseStory() {
     setPresentation(null);
-    setImported(null);
+    setChat(null);
   }
 
   if (presentation) {
@@ -63,10 +73,12 @@ function App() {
     );
   }
 
-  if (imported) {
+  if (chat) {
     return (
       <CustomizePage
-        data={imported.data}
+        chat={chat}
+        isLoading={isLoading}
+        error={error}
         theme={theme}
         onThemeChange={setTheme}
         onStart={handleStartStory}
